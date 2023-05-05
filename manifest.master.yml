@@ -1,0 +1,93 @@
+plugin:
+  name: custom-data-type-dante
+  version: 1.5
+  url: https://github.com/programmfabrik/fylr-plugin-custom-data-type-dante
+  displayname:
+    de-DE: DANTE-Verknüpfung
+    en-US: DANTE-Referencing
+  info:
+    de-DE: Stellt Verknüpfungen mit dem Normdatenserver DANTE her.
+    en-US: Use for references to entities of DANTE-AuthorityFile-Server.
+  l10n: l10n/customDataTypeDante.csv
+  webfrontend:
+    url: customDataTypeDante.js
+    css: customDataTypeDante.css
+
+base_url_prefix: "webfrontend"
+
+custom_types:
+  dante:
+    mapping:
+      conceptName:
+        type: text
+      conceptURI:
+        type: text
+      conceptAncestors:
+        type: text
+      conceptSource:
+        type: text
+      facetTerm:
+        type: text_l10n
+    update:
+      exec:
+        service: "node"
+        commands:
+          - prog: "node"
+            stdin:
+              type: body
+            stdout:
+              type: body
+            args:
+              - type: "value"
+                value: "%_exec.pluginDir%/updater/DANTEUpdater.js"
+              - type: "value"
+                value: "%info.json%"
+      timeout: 60
+      batch_size: 1
+      expires_days: 1
+      interval_base_config: update_interval_dante.days
+    config:
+      schema:
+        - name: vocabulary_name
+          parameters:
+            value:
+              type: text
+        - name: mapbox_access_token
+          parameters:
+            value:
+              type: text
+      mask:
+        - name: editor_style
+          parameters:
+            value:
+              type: select
+              options: ["popover", "popover_with_treeview", "dropdown"]
+        - name: use_cache
+          parameters:
+            value:
+              type: bool
+        - name: allow_label_choice
+          parameters:
+            value:
+              type: bool
+        - name: default_concept_uri
+          parameters:
+            value:
+              type: text
+        - name: default_concept_name
+          parameters:
+            value:
+              type: text
+base_config:
+  - name: update_interval_dante
+    group: update_custom_data_type
+    parameters:
+      days:
+        type: int
+        min: 0
+        default: 0
+        position: 0
+      default_language:
+        type: text
+        default: 'de'
+        position: 1

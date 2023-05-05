@@ -1,0 +1,86 @@
+key,de-DE,en-US
+custom.data.type.dante.name,DANTE-Verknüpfung,DANTE-Link
+custom.data.type.dante.edit.button|icon,edit,edit
+custom.data.type.dante.remove.button|icon,trash,trash
+custom.data.type.dante.config.option.mask.editor_style.value.inline,Eingebettet,embedded
+custom.data.type.dante.config.parameter.mask.editor_style.value.label,Editor-Stil,Editor-Style
+custom.data.type.dante.config.option.mask.editor_style.value.popover,Popover,Popover
+custom.data.type.dante.config.option.mask.editor_style.value.dropdown,Dropdown,Dropdown
+custom.data.type.dante.config.option.mask.editor_style.value.popover_with_treeview,Popover mit Baumansicht,Popover with treeview
+custom.data.type.dante.modal.form.url.placeholder,DANTE-Verknüpfung,DANTE-Link
+custom.data.type.dante.modal.form.text.label,Text,Text
+custom.data.type.dante.edit.modal.title|text,Mit Vokabulareintrag verknüpfen,Link with Vocabulary-Entry
+custom.data.type.dante.edit.no_valid_dante,Keine valide Datensatz-Verknüpfung,No valid Record-Link
+custom.data.type.dante.edit.no_dante,Keine Datensatz-Verknüpfung gesetzt,No Record-Link set
+custom.data.type.dante.modal.form.text.count,Anzahl Vorschläge,Count of suggestions
+custom.data.type.dante.modal.form.text.searchbar,Suchbegriff eingeben,Type searchterm
+custom.data.type.dante.modal.form.text.searchbar.placeholder, tippen ... ,type sth. ...
+custom.data.type.dante.modal.form.text.result.label,Gewählter Eintrag,Choosen entry
+custom.data.type.dante.modal.form.text.result.placeholder,noch leer,empty
+custom.data.type.dante.modal.form.text.uri.label,Zugehörige URI,Choosen URI
+custom.data.type.dante.modal.form.text.uri.label.placeholder,noch leer,empty
+custom.data.type.dante.modal.form.popup.suggest.nohit,Kein Treffer,No hit
+custom.data.type.dante.url.tooltip,zu **%(name)s** springen,jump to **%(name)s**
+custom.data.type.dante.config.parameter.mask.show_infopopup.value.label,Infopop,Infopopup
+custom.data.type.dante.config.parameter.mask.show_infopopup.value.checkbox,Infopop für Treffer in der Vorschlagsliste anzeigen?,Show infopopup in list?
+custom.data.type.dante.config.parameter.mask.use_inline.value.checkbox,Dropdown benutzen statt Popup.,Dropdown instead of popup
+custom.data.type.dante.config.parameter.mask.use_inline.value.label,Dropdown,Dropdown
+custom.data.type.dante.config.parameter.mask.use_cache.value.checkbox,Cache nutzen.,Use Cache
+custom.data.type.dante.config.parameter.mask.use_cache.value.label,Cache,Cache
+custom.data.type.dante.config.parameter.mask.hide_result_info.value.checkbox,Anzeige des Ergebnisses verstecken (empfohlen bei Nutzung des Dropdowns!),Hide results (when using dropdown)
+custom.data.type.dante.config.parameter.mask.hide_result_info.value.label,Ergebnis verstecken,Hide result
+custom.data.type.dante.config.parameter.schema.vocabulary_name.value.label,DANTE-Vokabular-ID (aus https://api.dante.gbv.de/voc),Name of vocabulary (see http://uri.gbv.de/terminology/)
+custom.data.type.dante.config.parameter.mask.default_concept_uri.value.label,Standard-URI,Standard-URI
+custom.data.type.dante.config.parameter.mask.default_concept_name.value.label,Standard-Name,Standard-Name
+custom.data.type.dante.setting.schema.no_choosen_vocabulary,Kein DANTE-Vokabular hinterlegt,No DANTE-Vocabulary set
+custom.data.type.dante.config.parameter.mask.use_tree_view.value.checkbox,Baumansicht zum Navigieren,Treeview (only for Popup-Mode)
+custom.data.type.dante.config.parameter.mask.use_tree_view.value.label,Baumansicht,Use Treeview
+custom.data.type.dante.modal.form.popup.choose,Auswahl treffen,Choose record
+custom.data.type.dante.modal.form.popup.loadingstringtreeview,lade Baumansicht,loading treeview
+custom.data.type.dante.modal.form.popup.loadingstring,lade Informationen,loading information
+custom.data.type.dante.modal.form.popup.treeview.nopreflabel,ohne Begriff,without label
+custom.data.type.dante.modal.form.popup.treeviewsearch,Suchen,search
+custom.data.type.dante.modal.form.popup.add_choose,Eintrag übernehmen,choose record
+custom.data.type.dante.modal.form.popup.add_sitemap,Strukturbegriff,for structure only
+custom.data.type.dante.modal.form.popup.treeviewreset,Reset,reset
+custom.data.type.dante.modal.form.loadingSuggestions,lade Vorschläge,loading suggestions
+custom.data.type.dante.modal.form.popup.jskospreview.nopreflabel,ohne Begriff,without label
+custom.data.type.dante.modal.form.popup.jskospreview.terms,Bezeichnungen,Terms
+custom.data.type.dante.modal.form.popup.jskospreview.altterms,Andere Bezeichnungen,Alternative terms
+custom.data.type.dante.modal.form.popup.jskospreview.keywords,Schlagwörter,Keywords
+custom.data.type.dante.modal.form.popup.jskospreview.notations,Notationen,Notations
+custom.data.type.dante.modal.form.popup.jskospreview.colors,Farben,Colors
+custom.data.type.dante.modal.form.popup.jskospreview.georef,Georeferenzierung,Georeferencing
+custom.data.type.dante.modal.form.popup.jskospreview.definition,Definition,Definition
+custom.data.type.dante.modal.form.popup.jskospreview.scopenote,Verwendungshinweis,ScopeNote
+custom.data.type.dante.modal.form.popup.jskospreview.example,Beispiel,Example
+custom.data.type.dante.modal.form.popup.jskospreview.depiction,Bilder,Depiction
+custom.data.type.dante.modal.form.popup.jskospreview.endDate,Daseinsende,End of existence
+custom.data.type.dante.modal.form.popup.jskospreview.startDate,Daseinsbeginn,Beginning of existence
+custom.data.type.dante.config.parameter.schema.mapbox_access_token.value.label,Mapbox-Access-Token (Kartenanzeige),Mapbox-Access-Token (display maps)
+custom.data.type.dante.modal.form.dropdown.loadingentries,Einträge werden geladen ..,loading entries ..
+custom.data.type.dante.modal.form.dropdown.choose,auswählen ..,choose ..
+custom.data.type.dante.modal.form.dropdown.selectvocabularyLabel,Vokabular,Vocabulary
+custom.data.type.dante.modal.form.dropdown.choosefromvocall,Alle erlaubten Vokabulare,All allowed vocabularys
+custom.data.type.dante.config.parameter.mask.allow_label_choice.value.label,Erlaube die händische Auswahl aus den gegebenen Labels,Allow manual choice from available labels
+custom.data.type.dante.config.parameter.mask.allow_label_choice.value.checkbox,Erlaubt,Allowed
+custom.data.type.dante.modal.form.popup.choose_manual_label,Auswahl eines Labels, Choose a label
+custom.data.type.dante.modal.form.popup.choose_expertsearchmode_.exact,Exakt diese Auswahl,Exact this selection
+custom.data.type.dante.modal.form.popup.choose_expertsearchmode_.include_children,Auch Kinder einbeziehen,Include children too
+custom.data.type.dante.modal.form.popup.choose_expertsearchmode_.exact_short,Exakt,Exact
+custom.data.type.dante.modal.form.popup.choose_expertsearchmode_.include_children_short,Auch Kinder,Include children
+custom.data.type.dante.modal.form.popup.choose_expertsearchmode_label,Suchmodus für Expertensuche wählen,Select search mode for expert search
+custom.data.type.dante.modal.form.popup.choose_expertsearchmode_label2,Was wollen Sie finden? Nur exakte Treffer oder auch alle Kinder und Kindeskinder ihrer Suchauswahl?,What do you want to find? Only exact hits or also all children and grandchildren in your search selection?
+custom.data.type.dante.modal.form.popup.choose_expertsearchmode_label3,Ausgewählt,Selected
+server.config.name.system.update_interval_dante,DANTE-Update-Einstellungen,DANTE-Update-Configuration
+server.config.parameter.system.update_interval_dante.days.label,Tage zwischen Updates,Days between updates
+server.config.parameter.system.update_interval_dante.dev_api.label,Nutze Beta-API,Use beta-API
+server.config.parameter.system.update_interval_dante.dev_api.checkbox,Aktiviere Entwicklungs-API,Activate Development-API
+server.config.parameter.system.update_interval_dante.test_api.label,Teste API,Test API
+server.config.parameter.system.update_interval_dante.test_api.checkbox,Teste die API vor dem Update,Test API before update
+server.config.parameter.system.update_interval_dante.default_language.label,Standard-Datensprache als Fallback für Update (ISO 639-1),Default-data-language (as fallback) for update (ISO 639-1)
+custom.data.type.dante.config.parameter.schema.insert_allowed.value.label,Neu anlegen?,Add new?
+custom.data.type.dante.config.parameter.schema.insert_allowed.value.checkbox, Die Neuanlage von Datensätzen über das DANTE-Plugin erlauben (nicht im Dropdown-Modus möglich),Allow adding records via the DANTE plugin (not possible in dropdown-mode)
+custom.data.type.dante.config.parameter.schema.insert_username.value.label,Nutzername für das Neuanlegen (DANTE-Vokabular-Konfiguration),Username for adding (from DANTE vocabulary configuration)
+custom.data.type.dante.config.parameter.schema.insert_token.value.label,Token für das Neuanlegen (DANTE-Vokabular-Konfiguration),Token for adding (from DANTE vocabulary configuration)
+custom.data.type.commons.controls.addnew.label,Neu anlegen,add new
