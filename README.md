@@ -4,15 +4,23 @@ Programmfabrik GmbH. Please use the github issue tracking to report bugs
 and self organize bug fixing. Feel free to directly contact the committing
 developers.
 
-# easydb-custom-data-type-dante
+# custom-data-type-dante
 
-This is a plugin for [easyDB 5](http://5.easydb.de/) with Custom Data Type `CustomDataTypeDante` for references to entities of the [DANTE-Vokabulary-Server (https://dante.gbv.de)](https://dante.gbv.de).
+This is a plugin for [fylr](mentation.fylr.cloud/docs) with Custom Data Type `CustomDataTypeDante` for references to entities of the [DANTE-Vokabulary-Server (https://dante.gbv.de)](https://dante.gbv.de).
 
 The Plugins uses <https://api.dante.gbv.de/> for the communication with DANTE.
 
+## installation
+
+The latest version of this plugin can be found [here](https://github.com/programmfabrik/fylr-plugin-custom-data-type-dante/releases/latest/download/customDataTypeDante.zip).
+
+The ZIP can be downloaded and installed using the plugin manager, or used directly (recommended).
+
+Github has an overview page to get a list of [all releases](https://github.com/programmfabrik/fylr-plugin-custom-data-type-dante/releases/).
+
 ## configuration
 
-As defined in `manifest.yml` this datatype can be configured:
+As defined in `manifest.master.yml` this datatype can be configured:
 
 ### Schema options
 
@@ -22,9 +30,9 @@ As defined in `manifest.yml` this datatype can be configured:
 
 ### Mask options
 
-* whether to use as dropdown or as popup or popup with treeview
-* whether to use the cache
-* whether to use default values
+* editorstyle: dropdown, popup, popup with treeview
+* cache: on / off
+* default values
 
 ## saved data
 * conceptName
@@ -39,7 +47,8 @@ As defined in `manifest.yml` this datatype can be configured:
     * easydb-fulltext
 * _standard
     * easydb-standard
+* facetTerm
 
 ## sources
 
-The source code of this plugin is managed in a git repository at <https://github.com/programmfabrik/easydb-custom-data-type-dante>. Please use [the issue tracker](https://github.com/programmfabrik/easydb-custom-data-type-dante/issues) for bug reports and feature requests!
+The source code of this plugin is managed in a git repository at <https://github.com/programmfabrik/fylr-plugin-custom-data-type-dante>.
