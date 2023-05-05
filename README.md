@@ -7,6 +7,7 @@ developers.
 # custom-data-type-dante
 
 This is a plugin for [fylr](mentation.fylr.cloud/docs) with Custom Data Type `CustomDataTypeDante` for references to entities of the [DANTE-Vokabulary-Server (https://dante.gbv.de)](https://dante.gbv.de).
+For easydb5-instances use [easydb-custom-data-type-dante](https://github.com/programmfabrik/easydb-custom-data-type-dante).
 
 The Plugins uses <https://api.dante.gbv.de/> for the communication with DANTE.
 
