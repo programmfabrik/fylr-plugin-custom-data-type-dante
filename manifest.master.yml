@@ -52,16 +52,16 @@ custom_types:
           parameters:
             value:
               type: text
-        - name: mapbox_access_token
-          parameters:
-            value:
-              type: text
       mask:
         - name: editor_style
           parameters:
             value:
               type: select
               options: ["popover", "popover_with_treeview", "dropdown"]
+        - name: use_dropdown_info_popup
+          parameters:
+            value:
+              type: bool
         - name: use_cache
           parameters:
             value:
@@ -75,6 +75,14 @@ custom_types:
             value:
               type: text
         - name: default_concept_name
+          parameters:
+            value:
+              type: text
+        - name: vocabulary_name_overwrite
+          parameters:
+            value:
+              type: text
+        - name: mapbox_access_token
           parameters:
             value:
               type: text

@@ -155,7 +155,7 @@ CustomDataTypeDANTE.prototype.getJSKOSPreview = (data, mapbox_access_token = fal
             encodedGeoJSON = encodeURIComponent(encodedGeoJSON)
             if vp.zoom > 16
               vp.zoom = 15;
-            imageSrc = window.location.protocol + '//api.mapbox.com/v4/mapbox.streets-satellite/geojson(' + encodedGeoJSON + ')/' +  vp.center.join(',') + ',' + vp.zoom + '/' + size.join('x') + '@2x.png?access_token=' + mapbox_access_token
+            imageSrc = 'https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/geojson(' + encodedGeoJSON + ')/' +  vp.center.join(',') + ',' + vp.zoom + '/' + size.join('x') + '@2x?access_token=' + mapbox_access_token
             htmlContent = "<div class=\"mapImage\" style=\"background-image: url('" + imageSrc  + "');\"></div>"
             location += htmlContent
         if location != ''

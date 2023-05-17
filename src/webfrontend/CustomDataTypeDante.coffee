@@ -46,14 +46,21 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
   #######################################################################
   # returns name of the given vocabulary from datamodel
   getVocabularyNameFromDatamodel: (opts = {}) ->
-    xreturn = @getCustomSchemaSettings().vocabulary_name?.value
-    if ! xreturn
+
+    # if vocnotation is given in mask, use from masksettings
+    fromMask = @getCustomMaskSettings()?.vocabulary_name_overwrite?.value
+    if fromMask
+      return fromMask
+
+    # else use from datamodel-config
+    fromDatamodell = @getCustomSchemaSettings().vocabulary_name?.value
+    if ! fromDatamodell
       # maybe the call is from poolmanagerplugin?
       if opts?.callfrompoolmanager == true
         if opts?.voc
           return opts?.voc
-      xreturn = 'gender'
-    xreturn
+      fromDatamodell = 'gender'
+    fromDatamodell
 
   #######################################################################
   # returns, if user is allowed and correctly configured to add new records
@@ -509,7 +516,6 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
             # set new items to menu
             itemList =
               onClick: (ev2, btn) ->
-                console.log "selected from suggestionsmenu"
                 # if inline or treeview without popup
                 if ! that.renderPopupAsTreeview(opts) || ! that.popover?.isShown()
                   searchUri = btn.getOpt("value")
@@ -596,7 +602,6 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
                           cdata.conceptName = resultJSKOS.prefLabel[Object.keys(resultJSKOS.prefLabel)[0]]
 
                         opts.data[that.name(opts)] = CUI.util.copyObject(cdata)
-                        console.log "opts.data[that.name(opts)]", opts.data[that.name(opts)]
                         if opts?.callfrompoolmanager
                           if opts.data
                             cdata = CUI.util.copyObject(cdata)
@@ -888,8 +893,8 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
     if extendedInfo_xhr.xhr != undefined
       extendedInfo_xhr.xhr.abort()
 
-    if that.getCustomSchemaSettings().mapbox_access_token?.value
-      mapbox_access_token = that.getCustomSchemaSettings().mapbox_access_token.value
+    if that.getCustomMaskSettings()?.mapbox_access_token?.value
+      mapbox_access_token = that.getCustomMaskSettings().mapbox_access_token.value
     # start new request to DANTE-API
     extendedInfo_xhr.xhr = new (CUI.XHR)(url: location.protocol + '//api.dante.gbv.de/data?uri=' + uri + '&format=json&properties=+ancestors,hiddenLabel,notation,scopeNote,definition,identifier,example,location,depiction,startDate,endDate,startPlace,endPlace&cache=1')
     extendedInfo_xhr.xhr.start()
@@ -991,7 +996,6 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
       data: cdata
       fields: that.__getEditorFields(cdata, opts)
       onDataChanged: (data, elem) =>
-        console.log "change detected!!!"
         that.__updateResult(cdata, layout, opts)
         # update tree, if voc changed
         if elem.opts.name == 'dante_PopoverVocabularySelect' && that.renderPopupAsTreeview(opts)
@@ -1228,11 +1232,6 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
       tags.push $$("custom.data.type.dante.name") + ': ' + custom_settings.vocabulary_name.value
     else
       tags.push $$("custom.data.type.dante.setting.schema.no_choosen_vocabulary")
-
-    if custom_settings.mapbox_access_token?.value
-      tags.push "✓ Mapbox-Access-Token"
-    else
-      tags.push "✘ Mapbox-Access-Token"
 
     tags
 
