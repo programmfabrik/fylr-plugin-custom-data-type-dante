@@ -715,6 +715,7 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
   #######################################################################
   # update dropdown
   __updateDropdown: (cdata, data, layout, opts) ->
+      extendedInfo_xhr = { "xhr" : undefined }
       that = @
       fields = []
       select = {
@@ -748,12 +749,26 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
                       text: $$('custom.data.type.dante.modal.form.dropdown.choose')
                       value: null
                     )
+
                     select_items.push item
+
                     for suggestion, key in data[1]
+                      do(key) ->
                         item = (
                           text: suggestion
                           value: data[3][key]
                         )
+                        # only show tooltip, if configures in datamodel
+                        if that.getCustomMaskSettings()?.use_dropdown_info_popup?.value
+                          item.tooltip =
+                            markdown: true
+                            placement: 'nw'
+                            content: (tooltip) ->
+                              # get jskos-details-data
+                              that.__getAdditionalTooltipInfo(data[3][key], tooltip, extendedInfo_xhr)
+                              # loader, until details are xhred
+                              new CUI.Label(icon: "spinner", text: $$('custom.data.type.dante.modal.form.popup.loadingstring'))
+
                         select_items.push item
 
                     # if cdata is already set, choose correspondending option from select
