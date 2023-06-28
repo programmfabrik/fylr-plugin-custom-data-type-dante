@@ -398,6 +398,8 @@ class DANTE_ListViewTreeNode extends CUI.ListViewTreeNode
                               dataEntry_xhr = new (CUI.XHR)(url: allDataAPIPath)
                               dataEntry_xhr.start().done((data_response, status, statusText) ->
                                 resultJSKOS = data_response[0];
+                                if ! that._cdata
+                                  that._cdata = {}
                                 # if treeview, add ancestors
                                 that._cdata.conceptAncestors = []
                                 if resultJSKOS.ancestors.length > 0
