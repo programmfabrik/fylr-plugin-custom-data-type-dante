@@ -1135,6 +1135,7 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
     fields = []
     # dropdown for vocabulary-selection if more then 1 voc
     vocTest = that.getVocabularyNameFromDatamodel(opts)
+    vocTest = vocTest.replace(/,/g, "|");
     vocTestArr = vocTest.split('|')
     if vocTestArr.length > 1 or vocTest == '*'
       select =  {
