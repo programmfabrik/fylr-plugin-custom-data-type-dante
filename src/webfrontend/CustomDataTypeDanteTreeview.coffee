@@ -420,11 +420,11 @@ class DANTE_ListViewTreeNode extends CUI.ListViewTreeNode
                                 that._cdata.conceptName = that._prefLabel
                                 that._cdata.conceptURI = that._uri
                                 # save _fulltext
-                                that._cdata._fulltext = ez5.DANTEUtil.getFullTextFromJSKOSObject resultJSKOS
+                                that._cdata._fulltext = DANTEUtil.getFullTextFromJSKOSObject resultJSKOS, CustomDataTypeDANTE.prototype.getDatabaseLanguages()
                                 # save _standard
-                                that._cdata._standard = ez5.DANTEUtil.getStandardFromJSKOSObject resultJSKOS
+                                that._cdata._standard = DANTEUtil.getStandardFromJSKOSObject resultJSKOS, CustomDataTypeDANTE.prototype.getDatabaseLanguages()
                                 # save facet
-                                that._cdata.facetTerm = ez5.DANTEUtil.getFacetTermFromJSKOSObject resultJSKOS
+                                that._cdata.facetTerm = DANTEUtil.getFacetTermFromJSKOSObject resultJSKOS, CustomDataTypeDANTE.prototype.getDatabaseLanguages()
                                 # is this from exact search and user has to choose exact-search-mode?!
                                 if that._dante_opts?.callFromExpertSearch == true
                                   CustomDataTypeDANTE.prototype.__chooseExpertHierarchicalSearchMode(that._cdata, that._editor_layout, resultJSKOS, that._editor_layout, that._dante_opts)

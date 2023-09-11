@@ -28,6 +28,13 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
       return {}
 
   #######################################################################
+  # returns the databaseLanguages
+  getDatabaseLanguages: () ->
+    databaseLanguages = ez5.loca.getLanguageControl().getLanguages().slice()
+
+    return databaseLanguages
+
+  #######################################################################
   # overwrite getCustomSchemaSettings
   name: (opts = {}) ->
     if ! @ColumnSchema
@@ -299,6 +306,7 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
           onClick: (evt,button) =>
             # lock choosen conceptName in savedata
             cdata.conceptName = button.opts.text
+            cdata.conceptNameChosenByHand = true
             # update the layout in form
             that.__updateResult(cdata, layout, opts)
             # close popovers
@@ -581,11 +589,11 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
                       # lock conceptURI in savedata
                       cdata.conceptURI = resultJSKOS.uri
                       # lock _fulltext in savedata
-                      cdata._fulltext = ez5.DANTEUtil.getFullTextFromJSKOSObject resultJSKOS
+                      cdata._fulltext = DANTEUtil.getFullTextFromJSKOSObject resultJSKOS, that.getDatabaseLanguages()
                       # lock _standard in savedata
-                      cdata._standard = ez5.DANTEUtil.getStandardFromJSKOSObject resultJSKOS
+                      cdata._standard = DANTEUtil.getStandardFromJSKOSObject resultJSKOS, that.getDatabaseLanguages()
                       # lock facetTerm in savedata
-                      cdata.facetTerm = ez5.DANTEUtil.getFacetTermFromJSKOSObject resultJSKOS
+                      cdata.facetTerm = DANTEUtil.getFacetTermFromJSKOSObject resultJSKOS, that.getDatabaseLanguages()
 
                       # is user allowed to choose label manually from list and not in expert-search?!
                       if that.getCustomMaskSettings().allow_label_choice?.value && opts?.mode == 'editor'
@@ -825,9 +833,9 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
                       # download data from dante for fulltext
                       fulltext_xhr = new (CUI.XHR)(url: location.protocol + '//api.dante.gbv.de/data?uri=' + encodeURIComponent(cdata.conceptURI) + '&cache=1&properties=+ancestors,hiddenLabel,notation,scopeNote,definition,identifier,example,location,depiction,startDate,endDate,startPlace,endPlace')
                       fulltext_xhr.start().done((detail_data, status, statusText) ->
-                          cdata._fulltext = ez5.DANTEUtil.getFullTextFromJSKOSObject detail_data
-                          cdata._standard= ez5.DANTEUtil.getStandardFromJSKOSObject detail_data
-                          cdata.facetTerm = ez5.DANTEUtil.getFacetTermFromJSKOSObject detail_data
+                          cdata._fulltext = DANTEUtil.getFullTextFromJSKOSObject detail_data, that.getDatabaseLanguages()
+                          cdata._standard= DANTEUtil.getStandardFromJSKOSObject detail_data, that.getDatabaseLanguages()
+                          cdata.facetTerm = DANTEUtil.getFacetTermFromJSKOSObject detail_data, that.getDatabaseLanguages()
                           if ! cdata?.conceptURI
                             cdata = {}
                           data[that.name(opts)] = cdata
