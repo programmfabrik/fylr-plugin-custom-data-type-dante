@@ -82,9 +82,8 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
     if @getCustomSchemaSettings()?.insert_allowed?.value == true
       if @getCustomSchemaSettings()?.insert_username?.value != '' && @getCustomSchemaSettings()?.insert_token?.value != ''&& @getCustomSchemaSettings()?.insert_voc_notation?.value != ''
         # check system_right
-        if ez5.session.hasSystemRight("plugin.custom-data-type-dante.dante_plugin", "dante_allow_add_records")
-          if ez5.session.system_rights?['plugin.custom-data-type-dante.dante_plugin']?['dante_allow_add_records'] == true
-            status = true
+        if ez5.session.hasSystemRight("plugin.custom-data-type-dante.dante_plugin", "dante_allow_add_records") || ez5.session.hasSystemRight("system.root")
+          status = true
     status
 
   #######################################################################
