@@ -20,6 +20,12 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
       return {}
 
   #######################################################################
+  # temporarily disable cache (after "add-new" / "ingest" - action)
+  disableCache: ->
+    @FieldSchema.custom_settings.use_cache.value = false
+    return
+
+  #######################################################################
   # overwrite getCustomSchemaSettings
   getCustomSchemaSettings: ->
     if @ColumnSchema
@@ -31,7 +37,6 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
   # returns the databaseLanguages
   getDatabaseLanguages: () ->
     databaseLanguages = ez5.loca.getLanguageControl().getLanguages().slice()
-
     return databaseLanguages
 
   #######################################################################
@@ -53,7 +58,6 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
   #######################################################################
   # returns name of the given vocabulary from datamodel
   getVocabularyNameFromDatamodel: (opts = {}) ->
-
     # if vocnotation is given in mask, use from masksettings
     fromMask = @getCustomMaskSettings()?.vocabulary_name_overwrite?.value
     if fromMask
@@ -69,63 +73,248 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
       fromDatamodell = 'gender'
     fromDatamodell
 
+
   #######################################################################
   # returns, if user is allowed and correctly configured to add new records
-  ###
   getIngestPermissionStatus: ->
     status = false;
-    if @getCustomSchemaSettings()?.insert_allowed
-      if @getCustomSchemaSettings()?.insert_username
-        if @getCustomSchemaSettings()?.insert_token
-          if @getCustomSchemaSettings().insert_username != '' && @getCustomSchemaSettings().insert_token != ''
+    # check settings in schema
+    if @getCustomSchemaSettings()?.insert_allowed?.value == true
+      if @getCustomSchemaSettings()?.insert_username?.value != '' && @getCustomSchemaSettings()?.insert_token?.value != ''&& @getCustomSchemaSettings()?.insert_voc_notation?.value != ''
+        # check system_right
+        if ez5.session.hasSystemRight("plugin.custom-data-type-dante.dante_plugin", "dante_allow_add_records")
+          if ez5.session.system_rights?['plugin.custom-data-type-dante.dante_plugin']?['dante_allow_add_records'] == true
             status = true
     status
-  ###
+
   #######################################################################
   # returns an entry for the three-dots-button-bar for addition of new records
-  ###
-  getCustomButtonBarEntryForNewRecordAddition: ->
-    that = @
+
+  clearIngestForm: (that) ->
+      that.form.getFieldsByName('dante_addnew_form_preflabel')[0].setValue("")
+      that.form.getFieldsByName('dante_addnew_form_altlabel')[0].setValue("")
+      that.form.getFieldsByName('dante_addnew_form_altlabel2')[0].setValue("")
+      that.form.getFieldsByName('dante_addnew_form_definition')[0].setValue("")
+      that.form.getFieldsByName('dante_addnew_form_example')[0].setValue("")
+      that.form.getFieldsByName('dante_addnew_form_note')[0].setValue("")
+      @
+
+  enableIngestButtonAndForm: (that) ->
+      # enable button
+      that.sendToDanteButton.enable()
+      # set button text
+      that.sendToDanteButton.setText $$('custom.data.type.dante.add_new.modal.ok_send_button')
+      # set icon
+      that.sendToDanteButton.setIcon new CUI.Icon(class: "fa-arrow-circle-o-right")
+      # enable form
+      that.form.enable()
+      @
+
+  disableIngestButtonAndForm: (that) ->
+      # disable this button
+      that.sendToDanteButton.disable()
+      # change text
+      that.sendToDanteButton.setText $$('custom.data.type.commons.controls.addnew.sending')
+      # add loader icon
+      that.sendToDanteButton.setIcon new CUI.Icon(class: "fa-spinner fa-spin")
+      # disable form
+      that.form.disable()
+      @
+
+  getCustomButtonBarEntryForNewRecordAddition: (that, data, cdata, opts={}) ->
+    that.modal = {}
+    that.form = {}
+    that.confDialog = {}
+
+    that.sendToDanteButton = new CUI.Button
+                      text: $$("custom.data.type.dante.add_new.modal.ok_send_button")
+                      class: "cui-dialog"
+                      icon_left: new CUI.Icon(class: "fa-arrow-circle-o-right")
+                      primary: true
+                      hidden: true
+                      onClick: =>
+
+                        that.disableIngestButtonAndForm that
+
+                        #############################################
+                        # build jskos from given information
+
+                        # check if at least "preflabel" ist given
+                        prefLabel = that.form.getFieldsByName('dante_addnew_form_preflabel')[0]
+
+                        if ! prefLabel.getValue()
+                          CUI.alert(text: $$('custom.data.type.commons.controls.addnew.no_preflabel_given'))
+                          that.enableIngestButtonAndForm that
+                          return
+
+                        newJSKOSRecord = {}
+                        newJSKOSRecord.uri = ''
+                        newJSKOSRecord.type = ['http://www.w3.org/2004/02/skos/core#Concept']
+                        newJSKOSRecord.inScheme = [{'uri' : 'http://uri.gbv.de/terminology/' + that.getCustomSchemaSettings().insert_voc_notation.value }]
+                        newJSKOSRecord.prefLabel = {'de' : that.form.getFieldsByName('dante_addnew_form_preflabel')[0].getValue()}
+                        altLabels = []
+                        if that.form.getFieldsByName('dante_addnew_form_altlabel')[0].getValue()
+                          altLabels.push that.form.getFieldsByName('dante_addnew_form_altlabel')[0].getValue()
+                        if that.form.getFieldsByName('dante_addnew_form_altlabel2')[0].getValue()
+                          altLabels.push that.form.getFieldsByName('dante_addnew_form_altlabel2')[0].getValue()
+
+                        if altLabels.length > 0
+                          newJSKOSRecord.altLabel = {'de' : altLabels }
+
+                        if that.form.getFieldsByName('dante_addnew_form_definition')[0].getValue()
+                          newJSKOSRecord.definition = {'de' : [that.form.getFieldsByName('dante_addnew_form_definition')[0].getValue()]}
+
+                        if that.form.getFieldsByName('dante_addnew_form_example')[0].getValue()
+                          newJSKOSRecord.example = {'de' : [that.form.getFieldsByName('dante_addnew_form_example')[0].getValue()]}
+
+                        if that.form.getFieldsByName('dante_addnew_form_note')[0].getValue()
+                          newJSKOSRecord.note = {'de' : [that.form.getFieldsByName('dante_addnew_form_note')[0].getValue()]}
+
+                        newJSKOS = [newJSKOSRecord]
+                        newJSKOSString = JSON.stringify newJSKOS
+                        ingestObject = [{ 'username' : that.getCustomSchemaSettings().insert_username.value, 'token' : that.getCustomSchemaSettings().insert_token.value, 'data' : JSON.stringify(newJSKOS)}]
+                        newIngestString = JSON.stringify ingestObject
+
+                        #############################################
+                        # send jskos to dante and parse result
+                        dante_ingest_xhr = new CUI.XHR
+                                                  url: "https://dev-api.dante.gbv.de/ingest"
+                                                  timeout: 10000
+                                                  method: 'POST'
+                                                  body: newIngestString
+
+                        dante_ingest_xhr.start()
+                        .done (data, status, statusText) =>
+                          # disable cache!
+                          that.disableCache()
+                          # show dialog: "ok" or "take over new record"
+                          that.confDialog = new CUI.ConfirmationDialog
+                                            markdown: true,
+                                            text: $$('custom.data.type.commons.controls.addnew.new_record_message', uri: data[0].uri)
+                                            title: $$('custom.data.type.commons.controls.addnew.new_record_title')
+                                            icon: "question"
+                                            buttons: [
+                                              text: $$('custom.data.type.commons.controls.addnew.new_record_not_take_over')
+                                              onClick: =>
+                                                # dont take over new record
+                                                that.sendToDanteButton.hide()
+                                                that.enableIngestButtonAndForm that
+                                                that.clearIngestForm that
+                                                that.confDialog.destroy()
+                                                that.modal.destroy()
+                                            ,
+                                              text: $$('custom.data.type.commons.controls.addnew.new_record_take_over')
+                                              primary: true
+                                              onClick: =>
+                                                that.sendToDanteButton.hide()
+                                                that.enableIngestButtonAndForm that
+                                                that.clearIngestForm that
+                                                that.confDialog.destroy()
+                                                that.modal.destroy()
+                                                # DO take over new record
+                                                if data.length == 1
+                                                  resultJSKOS = data[0]
+                                                  # lock conceptName (only preflabel)
+                                                  cdata.conceptName = resultJSKOS.prefLabel[Object.keys(resultJSKOS.prefLabel)[0]]
+                                                  # lock conceptURI in savedata
+                                                  cdata.conceptURI = resultJSKOS.uri
+                                                  # no ancestors, because not in hierarchy yet
+                                                  cdata.conceptAncestors = []
+                                                  # lock _fulltext in savedata
+                                                  cdata._fulltext = DANTEUtil.getFullTextFromJSKOSObject resultJSKOS, that.getDatabaseLanguages()
+                                                  # lock _standard in savedata
+                                                  cdata._standard = DANTEUtil.getStandardFromJSKOSObject resultJSKOS, that.getDatabaseLanguages()
+                                                  # lock facetTerm in savedata
+                                                  cdata.facetTerm = DANTEUtil.getFacetTermFromJSKOSObject resultJSKOS, that.getDatabaseLanguages()
+                                                  # update layout
+                                                  that.__updateResult(cdata, that.layout, opts)
+                                            ]
+                          that.confDialog.show()
+                        .fail (data, status, statusText) =>
+                          errorMessage = 'unknown'
+                          if data?.Description
+                            errorMessage = status + ' ' + statusText + ': ' + data.Description
+                          that.enableIngestButtonAndForm that
+                          CUI.alert(text: $$('custom.data.type.commons.controls.addnew.error_while_ingest', error: errorMessage))
+
     addNew =
         text: $$('custom.data.type.commons.controls.addnew.label')
         value: 'new'
         name: 'addnewValueFromDANTEPlugin'
         class: 'addnewValueFromDANTEPlugin'
         icon_left: new CUI.Icon(class: "fa-plus")
-        onClick: ->
-          console.log "clicked on add-button"
+        onClick: =>
+          # hide dots-menu
+          that.dotsButtonMenu.hide()
           # open modal with form for entering of basic record information
-          modal = new CUI.Modal
+          that.modal = new CUI.Modal
               placement: "c"
               pane:
-                  content: "No Content. Fill it."
-                  header_left: new CUI.Label( text: "LEFT" )
-                  header_right: new CUI.Label( text: "RIGHT" )
+                  content:
+                    new CUI.Label
+                      text: $$("custom.data.type.dante.add_new.modal.introtext")
+                      multiline: true
+                  header_left: new CUI.Label( text: $$("custom.data.type.dante.add_new.modal.header_left"))
+                  header_right: new CUI.Label( text: $$("custom.data.type.dante.add_new.modal.header_right") + ': ' + that.getCustomSchemaSettings().insert_voc_notation.value)
                   footer_right: =>
                     [
                       new CUI.Button
-                        text: "Fill"
+                        text: $$("custom.data.type.dante.add_new.modal.show_form")
                         class: "cui-dialog"
-                        onClick: =>
-                          @mod.append(@getBlindText())
+                        onClick: (e, b) =>
+                          b.hide()
+                          that.form = new CUI.Form
+                              fields: [
+                                form:
+                                  label: $$("custom.data.type.dante.add_new.modal.form.preflabel") + ' *'
+                                  hint: $$("custom.data.type.dante.add_new.modal.form.preflabel.hint")
+                                type: CUI.Input
+                                name: "dante_addnew_form_preflabel"
+                              ,
+                                form:
+                                  label: $$("custom.data.type.dante.add_new.modal.form.altlabel")
+                                type: CUI.Input
+                                name: "dante_addnew_form_altlabel"
+                              ,
+                                form:
+                                  label: $$("custom.data.type.dante.add_new.modal.form.altlabel2")
+                                type: CUI.Input
+                                name: "dante_addnew_form_altlabel2"
+                              ,
+                                form:
+                                  label: $$("custom.data.type.dante.add_new.modal.form.definition")
+                                type: CUI.Input
+                                textarea: true
+                                name: "dante_addnew_form_definition"
+                              ,
+                                form:
+                                  label: $$("custom.data.type.dante.add_new.modal.form.example")
+                                type: CUI.Input
+                                textarea: true
+                                name: "dante_addnew_form_example"
+                              ,
+                                form:
+                                  label: $$("custom.data.type.dante.add_new.modal.form.note")
+                                  hint: $$("custom.data.type.dante.add_new.modal.form.note.hint")
+                                type: CUI.Input
+                                textarea: true
+                                name: "dante_addnew_form_note"
+                              ]
+                          that.form.start()
+                          that.modal.setContent(that.form)
+                          that.sendToDanteButton.show()
                     ,
                       new CUI.Button
-                        text: "Cancel"
+                        text: $$("custom.data.type.dante.add_new.modal.cancel_button")
                         class: "cui-dialog"
                         onClick: =>
-                          @mod.destroy()
+                          that.sendToDanteButton.hide()
+                          that.modal.destroy()
                     ,
-                      new CUI.Button
-                        text: "Ok"
-                        class: "cui-dialog"
-                        primary: true
-                        onClick: =>
-                          @mod.destroy()
+                      that.sendToDanteButton
                     ]
-          modal.show()
-          #that.__updateResult(cdata, layout, opts)
+          that.modal.show()
 
-  ###
   #######################################################################
   # render popup as treeview?
   renderPopupAsTreeview: (opts) ->
@@ -702,9 +891,10 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
     if editorStyle == 'dropdown'
         @__renderEditorInputInline(data, cdata, opts)
     else
-        #opts.customButtonBarEntrys = []
-        #opts.customButtonBarEntrys.push that.getCustomButtonBarEntryForNewRecordAddition()
-        @__renderEditorInputPopover(data, cdata, opts)
+        # add "add-new"-button to menu?
+        if that.getIngestPermissionStatus() == true
+          customButtonBarEntrys = [that.getCustomButtonBarEntryForNewRecordAddition(that, data, cdata, opts)]
+        @__renderEditorInputPopover(data, cdata, opts, customButtonBarEntrys)
 
 
   #######################################################################
@@ -1257,6 +1447,10 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
     else
       tags.push $$("custom.data.type.dante.setting.schema.no_choosen_vocabulary")
 
+    if custom_settings.insert_allowed?.value
+      tags.push $$("custom.data.type.commons.controls.addnew.label") + ' ✓'
+    else
+      tags.push $$("custom.data.type.commons.controls.addnew.label") + ' ✗'
     tags
 
 

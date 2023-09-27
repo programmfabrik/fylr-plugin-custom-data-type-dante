@@ -83,7 +83,31 @@ custom.data.type.dante.config.parameter.schema.insert_allowed.value.label,Neu an
 custom.data.type.dante.config.parameter.schema.insert_allowed.value.checkbox, Die Neuanlage von Datensätzen über das DANTE-Plugin erlauben (nicht im Dropdown-Modus möglich),Allow adding records via the DANTE plugin (not possible in dropdown-mode)
 custom.data.type.dante.config.parameter.schema.insert_username.value.label,Nutzername für das Neuanlegen (DANTE-Vokabular-Konfiguration),Username for adding (from DANTE vocabulary configuration)
 custom.data.type.dante.config.parameter.schema.insert_token.value.label,Token für das Neuanlegen (DANTE-Vokabular-Konfiguration),Token for adding (from DANTE vocabulary configuration)
+custom.data.type.dante.config.parameter.schema.insert_voc_notation.value.label,Zielvokabular für Neuanlagen,Target vocabulary for new records
 custom.data.type.commons.controls.addnew.label,Neu anlegen,add new
 custom.data.type.dante.config.parameter.mask.use_dropdown_info_popup.value.label,Infopopup?,Infopopup?
 custom.data.type.dante.config.parameter.mask.use_dropdown_info_popup.value.checkbox,Auch für Dropdown anzeigen,Show for dropdown too
 custom.data.type.dante.config.parameter.mask.vocabulary_name_overwrite.value.label,Vokabularkonfiguration aus Schema überschreiben,Overwrite vocnotation-config from schema
+custom.data.type.dante.add_new.modal.header_left,Datensatz neu anlegen,Create new record
+custom.data.type.dante.add_new.modal.header_right,Vokabular,Vocabulary
+custom.data.type.dante.add_new.modal.introtext,"Sie können hier neue Datensätze für das oben rechts angezeigte Vokabular anlegen.\n\nDie Redaktion des Vokabulars wird über den neuen Datensatz benachrichtigt und wird diesen ggf. bearbeiten oder verfeinern.\n\nDer neue Datensatz kann nach Anlage direkt hier verwendet werden.","You can create new data records here for the vocabulary displayed at the top right.\n\nThe editors of the vocabulary will be notified of the new data record and will edit or refine it if necessary.\n\nThe new data record can be used directly here after it has been created. "
+custom.data.type.dante.add_new.modal.show_form,Formular anzeigen,Show form
+custom.data.type.dante.add_new.modal.ok_send_button,Sende neuen Datensatz,Send new record
+custom.data.type.dante.add_new.modal.cancel_button,Abbrechen,Cancel
+custom.data.type.dante.add_new.modal.form.preflabel,Bevorzugte Bezeichnung,Preferred Label
+custom.data.type.dante.add_new.modal.form.preflabel.hint,"Die bevorzugte Bezeichnung des Konzepts, der Person oder des Ortes","The preferred name of the concept, person or place"
+custom.data.type.dante.add_new.modal.form.altlabel,Alternative Bezeichnung,Alternative Label
+custom.data.type.dante.add_new.modal.form.altlabel2,Alternative Bezeichnung (weitere),Alternative Label (another one)
+custom.data.type.dante.add_new.modal.form.definition,Definition,Definition
+custom.data.type.commons.controls.addnew.new_record_message,"Der Datensatz mit der URI **%(uri)s** wurde erfolgreich neu angelegt! \n\n Soll der Datensatz direkt in dieses Feld übernommen werden?","The data record with the URI **%(uri)s** was successfully created! \n\n Should the data record be copied directly into this field?"
+custom.data.type.dante.add_new.modal.form.example,Beispiel,Example
+custom.data.type.commons.controls.addnew.error_while_ingest,"Bei der Übertragung ist leider ein Fehler aufgetreten. \n\n Die Fehlermeldung lautet: \n\n %(error)s \n\n Probieren Sie es noch einmal und kontaktieren Sie ggf. Ihren Administrator.","Unfortunately an error occurred during the transfer. \n\n The errormessage is: \n\n %(error)s \n\n Please try again and contact your administrator if necessary."
+custom.data.type.commons.controls.addnew.sending,Sende Datensatz,Sending record
+custom.data.type.commons.controls.addnew.no_preflabel_given,Fehlendes Pflichtfeld: Bevorzugte Bezeichnung,Missing mandatory field: Preferred name
+custom.data.type.dante.add_new.modal.form.note,Anmerkung,Note
+custom.data.type.dante.add_new.modal.form.note.hint,Hier können alle weiteren bekannten und hilfreichen Informationen vermerkt werden.,All other known and helpful information can be noted here.
+custom.data.type.commons.controls.addnew.new_record_title,Neuer Datensatz,New record
+custom.data.type.commons.controls.addnew.new_record_not_take_over,"Nein, danke","No, thanks"
+custom.data.type.commons.controls.addnew.new_record_take_over,Datensatz direkt übernehmen,Select new record directly
+server.right.system.plugin.custom-data-type-dante.dante_plugin,DANTE-Plugin,DANTE-Plugin
+server.right.system.plugin.custom-data-type-dante.dante_plugin.parm.dante_allow_add_records,Das Hinzufügen von Datensätzen erlauben?,Allow to add new records?

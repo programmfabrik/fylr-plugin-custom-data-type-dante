@@ -28,6 +28,10 @@ As defined in `manifest.master.yml` this datatype can be configured:
 * which "vocabulary_name" to use. List of Vocabularys [in DANTE](https://dante.gbv.de/search?ot=vocabulary) or [as JSKOS via API](https://api.dante.gbv.de/voc) or [uri.gbv.de/terminology](http://uri.gbv.de/terminology/)
   * for the popup-modes multible vocabularys can be set as a "|"-splitted list
 * which mapbox-access-token to use
+* add new: allow
+* add new: target vocabulary for new records
+* add new: username for adding
+* add new: token for adding
 
 ### Mask options
 

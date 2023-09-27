@@ -52,6 +52,22 @@ custom_types:
           parameters:
             value:
               type: text
+        - name: insert_allowed
+          parameters:
+            value:
+              type: bool
+        - name: insert_voc_notation
+          parameters:
+            value:
+              type: text
+        - name: insert_username
+          parameters:
+            value:
+              type: text
+        - name: insert_token
+          parameters:
+            value:
+              type: text
       mask:
         - name: editor_style
           parameters:
@@ -99,3 +115,9 @@ base_config:
         type: text
         default: 'de'
         position: 1
+
+system_rights:
+  - name: dante_plugin
+    parameters:
+      - name: dante_allow_add_records
+        type: bool
