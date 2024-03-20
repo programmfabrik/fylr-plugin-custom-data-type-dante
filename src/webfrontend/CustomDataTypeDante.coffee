@@ -423,7 +423,7 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
                   type: "match"
                   mode: "token"
                   bool: "must",
-                  phrase: false
+                  phrase: true
                   fields: [ @path() + '.' + @name() + ".conceptAncestors" ]
               ]
           if ! data[@name()]
@@ -797,7 +797,9 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
                         else
                           cdata.conceptName = resultJSKOS.prefLabel[Object.keys(resultJSKOS.prefLabel)[0]]
 
-                        opts.data[that.name(opts)] = CUI.util.copyObject(cdata)
+                        if opts?.data
+                            opts.data[that.name(opts)] = CUI.util.copyObject(cdata)
+                        
                         if opts?.callfrompoolmanager
                           if opts.data
                             cdata = CUI.util.copyObject(cdata)
