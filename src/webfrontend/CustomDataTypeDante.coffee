@@ -1136,6 +1136,7 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
     else
       # else get first voc from given voclist (1-n)
       vocParameter = that.getActiveVocabularyName(cdata, opts)
+      vocParameter = vocParameter.replace /,/g, "|"
       vocParameter = vocParameter.split('|')
       vocParameter = vocParameter[0]
 
@@ -1364,14 +1365,15 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
                     value: that.getVocabularyNameFromDatamodel(opts)
                   )
                   select_items.push item
-                # add vocs to select
-                for entry, key in data
-                    item = (
-                      text: entry.prefLabel.de
-                      value: entry.notation[0]
-                    )
-                    select_items.push item
-
+                # add vocs to select, keep sorting from parameter
+                for vocEntry, vocKey in vocTestArr
+                    for entry, key in data
+                        if vocEntry == entry.notation[0]
+                            item = (
+                              text: entry.prefLabel.de
+                              value: entry.notation[0]
+                            )
+                            select_items.push item
                 thisSelect.enable()
                 dfr.resolve(select_items)
             )
