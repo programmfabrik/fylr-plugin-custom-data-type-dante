@@ -14,10 +14,6 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Fix post run npm cleanup
-        run: mkdir -p /home/runner/.npm; touch /home/runner/package-lock.json
-        continue-on-error: true
-
       - name: Install Node.js and npm
         uses: actions/setup-node@v3
         with:
