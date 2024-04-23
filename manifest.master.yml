@@ -29,6 +29,8 @@ custom_types:
       facetTerm:
         type: text_l10n
     update:
+      plugin_user:
+        reference: system:root
       exec:
         service: "node"
         commands:
