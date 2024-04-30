@@ -428,7 +428,10 @@ class DANTE_ListViewTreeNode extends CUI.ListViewTreeNode
                                 # is this from exact search and user has to choose exact-search-mode?!
                                 if that._dante_opts?.callFromExpertSearch == true
                                   CustomDataTypeDANTE.prototype.__chooseExpertHierarchicalSearchMode(that._cdata, that._editor_layout, resultJSKOS, that._editor_layout, that._dante_opts)
-
+                                # add custom mask settings to opts
+                                if that?._context?.FieldSchema?.custom_settings
+                                    that._dante_opts.custom_settings = that._context.FieldSchema.custom_settings
+                                    
                                 # update form
                                 CustomDataTypeDANTE.prototype.__updateResult(that._cdata, that._editor_layout, that._dante_opts)
                                 # hide popover

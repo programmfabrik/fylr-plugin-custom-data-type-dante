@@ -76,6 +76,11 @@ custom_types:
             value:
               type: select
               options: ["popover", "popover_with_treeview", "dropdown"]
+        - name: editor_display
+          parameters:
+            value:
+              type: select
+              options: ["default", "condensed"]
         - name: use_dropdown_info_popup
           parameters:
             value:

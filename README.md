@@ -38,6 +38,7 @@ As defined in `manifest.master.yml` this datatype can be configured:
 * editorstyle: dropdown, popup, popup with treeview
 * cache: on / off
 * default values
+* editordisplay: default or condensed (oneline)
 
 ## saved data
 * conceptName

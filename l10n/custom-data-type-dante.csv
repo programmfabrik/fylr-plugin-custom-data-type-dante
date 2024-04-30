@@ -111,3 +111,6 @@ custom.data.type.commons.controls.addnew.new_record_not_take_over,"Nein, danke",
 custom.data.type.commons.controls.addnew.new_record_take_over,Datensatz direkt übernehmen,Select new record directly
 server.right.system.plugin.custom-data-type-dante.dante_plugin,DANTE-Plugin,DANTE-Plugin
 server.right.system.plugin.custom-data-type-dante.dante_plugin.parm.dante_allow_add_records,Das Hinzufügen von Datensätzen erlauben?,Allow to add new records?
+custom.data.type.dante.config.parameter.mask.editor_display.value.label,Editor-Ansicht,Editor-Display
+custom.data.type.dante.config.option.mask.editor_display.value.default,Standard,Default
+custom.data.type.dante.config.option.mask.editor_display.value.condensed,1 Zeile,One-liner

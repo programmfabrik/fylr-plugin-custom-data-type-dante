@@ -244,7 +244,6 @@ outputErr = (err2) => {
     access_token = info && info.plugin_user_access_token;
     
     if(access_token) {
-        console.error(JSON.stringify(info));
 
         ////////////////////////////////////////////////////////////////////////////
         // get config and read the languages
@@ -315,6 +314,5 @@ outputErr = (err2) => {
     else {
         console.error("kein Accesstoken gefunden");
     }
-    
 
 })();
