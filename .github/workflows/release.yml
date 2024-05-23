@@ -9,18 +9,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Install coffeescript-compiler
+        run: sudo apt-get install coffeescript
+
       - name: Checkout
         uses: actions/checkout@v2
         with:
           submodules: recursive
 
-      - name: Install Node.js and npm
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-
-      - name: Install coffeescript
-        run: npm install -g coffeescript
+      - name: Checkout submodules
+        run: git submodule update --init --recursive
 
       - name: Get the version
         id: get_version
