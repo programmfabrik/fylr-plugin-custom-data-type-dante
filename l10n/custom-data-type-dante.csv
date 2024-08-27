@@ -13,7 +13,7 @@ custom.data.type.dante.edit.modal.title|text,Mit Vokabulareintrag verknüpfen,Li
 custom.data.type.dante.edit.no_valid_dante,Keine valide Datensatz-Verknüpfung,No valid Record-Link
 custom.data.type.dante.edit.no_dante,Keine Datensatz-Verknüpfung gesetzt,No Record-Link set
 custom.data.type.dante.modal.form.text.count,Anzahl Vorschläge,Count of suggestions
-custom.data.type.dante.modal.form.text.searchbar,Suchbegriff eingeben,Type searchterm
+custom.data.type.dante.modal.form.text.searchbar,Suchbegriff,Searchterm
 custom.data.type.dante.modal.form.text.searchbar.placeholder, tippen ... ,type sth. ...
 custom.data.type.dante.modal.form.text.result.label,Gewählter Eintrag,Choosen entry
 custom.data.type.dante.modal.form.text.result.placeholder,noch leer,empty
@@ -114,3 +114,7 @@ server.right.system.plugin.custom-data-type-dante.dante_plugin.parm.dante_allow_
 custom.data.type.dante.config.parameter.mask.editor_display.value.label,Editor-Ansicht,Editor-Display
 custom.data.type.dante.config.option.mask.editor_display.value.default,Standard,Default
 custom.data.type.dante.config.option.mask.editor_display.value.condensed,1 Zeile,One-liner
+custom.data.type.dante.config.parameter.mask.label_with_hierarchie.value.label,Label mit generierter Hierarchie,Label with generated hierarchie
+custom.data.type.dante.config.parameter.mask.label_with_hierarchie.value.checkbox,Hierarchie aktivieren,use hierarchie
+custom.data.type.dante.modal.form.popup.paging.label.page,Seite,Page
+custom.data.type.dante.modal.form.popup.paging.label.count,Treffer:,Hits:

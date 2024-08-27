@@ -385,14 +385,14 @@ class DANTE_ListViewTreeNode extends CUI.ListViewTreeNode
                             tooltip:
                               text: tooltipText
                             onClick: =>
-                              # get the ancestors and labels for fulltext
+                              # get all details about record and save
 
                               # cache?
                               cache = '&cache=0'
                               if that._context.resettedPopup
                                   cache = '&cache=1'
 
-                              allDataAPIPath = location.protocol + '//api.dante.gbv.de/data?uri=' + that._uri + cache + '&properties=+ancestors'
+                              allDataAPIPath = location.protocol + '//api.dante.gbv.de/data?uri=' + that._uri + cache + '&properties=+hiddenLabel,notation,scopeNote,definition,note,identifier,example,location,depiction,startDate,endDate,startPlace,endPlace,ancestors'
 
                               # start XHR
                               dataEntry_xhr = new (CUI.XHR)(url: allDataAPIPath)
@@ -400,31 +400,28 @@ class DANTE_ListViewTreeNode extends CUI.ListViewTreeNode
                                 resultJSKOS = data_response[0];
                                 if ! that._cdata
                                   that._cdata = {}
-                                # if treeview, add ancestors
-                                that._cdata.conceptAncestors = []
-                                if resultJSKOS.ancestors.length > 0
-                                  # save ancestor-uris to cdata
-                                  for jskos in resultJSKOS.ancestors
-                                    that._cdata.conceptAncestors.push jskos.uri
-                                # add own uri to ancestor-uris
-                                that._cdata.conceptAncestors.push that._uri
+                                # collect ancestors
+                                that._cdata.conceptAncestors = DANTEUtil.getConceptAncestorsFromJSKOS(resultJSKOS)
 
-                                # merge to string
-                                that._cdata.conceptAncestors = that._cdata.conceptAncestors.join(' ')
-
+                                labelWithHierarchie = false
+                                if that._context?.FieldSchema?.custom_settings?.label_with_hierarchie?.value == true && that._dante_opts?.mode == 'editor'
+                                    labelWithHierarchie = true
+                                
                                 # is user allowed to choose label manually from list and not in expert-search?!
                                 if that._context?.FieldSchema?.custom_settings?.allow_label_choice?.value == true && that._dante_opts?.mode == 'editor'
-                                  CustomDataTypeDANTE.prototype.__chooseLabelManually(that._cdata, that._editor_layout, resultJSKOS, that._editor_layout, that._dante_opts)
-
-                                # attach info to cdata_form
-                                that._cdata.conceptName = that._prefLabel
+                                  CustomDataTypeDANTE.prototype.__chooseLabelManually(that._cdata, that._editor_layout, resultJSKOS, that._editor_layout, that._dante_opts, labelWithHierarchie)
+                                    
+                                # save conceptName
+                                that._cdata.conceptName = DANTEUtil.getConceptNameFromJSKOSObject resultJSKOS, CustomDataTypeDANTE.prototype.getFrontendLanguage(), labelWithHierarchie
+                                that._cdata.conceptNameWithHierarchie = labelWithHierarchie
+                                # save conceptURI
                                 that._cdata.conceptURI = that._uri
                                 # save _fulltext
                                 that._cdata._fulltext = DANTEUtil.getFullTextFromJSKOSObject resultJSKOS, CustomDataTypeDANTE.prototype.getDatabaseLanguages()
                                 # save _standard
-                                that._cdata._standard = DANTEUtil.getStandardFromJSKOSObject resultJSKOS, CustomDataTypeDANTE.prototype.getDatabaseLanguages()
+                                that._cdata._standard = DANTEUtil.getStandardFromJSKOSObject resultJSKOS, CustomDataTypeDANTE.prototype.getDatabaseLanguages(), labelWithHierarchie
                                 # save facet
-                                that._cdata.facetTerm = DANTEUtil.getFacetTermFromJSKOSObject resultJSKOS, CustomDataTypeDANTE.prototype.getDatabaseLanguages()
+                                that._cdata.facetTerm = DANTEUtil.getFacetTermFromJSKOSObject resultJSKOS, CustomDataTypeDANTE.prototype.getDatabaseLanguages(), labelWithHierarchie
                                 # is this from exact search and user has to choose exact-search-mode?!
                                 if that._dante_opts?.callFromExpertSearch == true
                                   CustomDataTypeDANTE.prototype.__chooseExpertHierarchicalSearchMode(that._cdata, that._editor_layout, resultJSKOS, that._editor_layout, that._dante_opts)

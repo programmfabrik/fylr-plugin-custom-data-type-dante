@@ -51,57 +51,173 @@ class DANTEUtil
     else
       return false
 
-  ###
-  @name         getConceptNameFromJSKOSObject
-  @description  This function finds the best conceptName-Label
-  @param        {object}                JSKOS                 a jskos-object
-  @param        {string}                desiredLanguage       a language from iso639-1 (2-digit)
-  ###
-  @getConceptNameFromJSKOSObject: (jskos, desiredLanguage) ->
-      prefLabel = '';
 
-      if typeof $$ != "undefined"
+  @getDetailAboutRecordViaAPI: (that, uri, cache, opts, cdata, layout, anchorForLabelChoosePopup) ->
+    # get full record to get correct preflabel in desired language
+    detailAPIPath = location.protocol + '//api.dante.gbv.de/data?uri=' + uri + cache + '&properties=+hiddenLabel,notation,scopeNote,definition,identifier,example,location,startDate,endDate,startPlace,endPlace,ancestors'
+    # start suggest-XHR
+    dataEntry_xhr = new (CUI.XHR)(url: detailAPIPath)
+    dataEntry_xhr.start().done((data_detail, status, statusText) ->
+      resultJSKOS = data_detail[0]
+      if cdata == null
+        cdata = {}
+
+      if resultJSKOS.uri
+        labelWithHierarchie = false;
+        if that.getCustomMaskSettings().label_with_hierarchie?.value && opts?.mode == 'editor'
+          labelWithHierarchie = true
+          
+        cdata.conceptNameWithHierarchie = labelWithHierarchie
+          
+        # lock conceptURI in savedata
+        cdata.conceptURI = resultJSKOS.uri
+        # lock _fulltext in savedata
+        cdata._fulltext = DANTEUtil.getFullTextFromJSKOSObject resultJSKOS, that.getDatabaseLanguages()
+        # lock _standard in savedata
+        cdata._standard = DANTEUtil.getStandardFromJSKOSObject resultJSKOS, that.getDatabaseLanguages(), labelWithHierarchie
+        # lock facetTerm in savedata
+        cdata.facetTerm = DANTEUtil.getFacetTermFromJSKOSObject resultJSKOS, that.getDatabaseLanguages(), labelWithHierarchie
+        # lock conceptAncestors
+        cdata.conceptAncestors = DANTEUtil.getConceptAncestorsFromJSKOS(resultJSKOS)
+
+        # is user allowed to choose label manually from list and not in expert-search?!
+        if that.getCustomMaskSettings().allow_label_choice?.value && opts?.mode == 'editor'
+          that.__chooseLabelManually(cdata, layout, resultJSKOS, anchorForLabelChoosePopup, opts, labelWithHierarchie)
+        # user is not allowed to choose-label manually --> get prefLabel in default language
+        else
+          cdata.conceptName = DANTEUtil.getConceptNameFromJSKOSObject resultJSKOS, that.getFrontendLanguage(), labelWithHierarchie
+
+          if opts?.data
+              opts.data[that.name(opts)] = CUI.util.copyObject(cdata)
+          
+          if opts?.callfrompoolmanager
+            if opts.data
+              cdata = CUI.util.copyObject(cdata)
+
+              if opts?.datafieldproxy
+                CUI.Events.trigger
+                    node: opts.datafieldproxy
+                    type: "editor-changed"
+                CUI.Events.trigger
+                    node: opts.datafieldproxy
+                    type: "data-changed"
+          else
+            CUI.Events.trigger
+                node: layout
+                type: "editor-changed"
+            CUI.Events.trigger
+                node: layout
+                type: "data-changed"
+
+          # update the layout in form
+          that.__updateResult(cdata, layout, opts)
+          # close popover
+          if that.popover
+            that.popover.hide()
+          @
+    )
+
+
+  @getConceptAncestorsFromJSKOS: (jskos) ->
+      conceptAncestors = []
+      if jskos.ancestors.length > 0
+        # collect ancestor-uris
+        for ancestor in jskos.ancestors
+          conceptAncestors.push ancestor.uri
+      # add own uri to ancestor-uris
+      conceptAncestors.push jskos.uri
+      # merge ancestores to string
+      conceptAncestors = conceptAncestors.join(' ')
+      return conceptAncestors
+    
+
+  @getHierarchieLabel: (jskos, desiredLanguage) ->
+     hierarchieLabelGenerated = ''
+     if typeof $$ != "undefined"
         prefLabelFallback = $$("custom.data.type.dante.modal.form.popup.treeview.nopreflabel")
       else
         prefLabelFallback = 'kein Label gefunden'
 
-      if ! jskos['prefLabel']
+      if ! jskos['prefLabel'] || ! jskos['ancestors']
         return prefLabelFallback
+        
+      # collect all the preflabels of record and ancestors
+      givenHierarchieLabels = []
+      givenHierarchieLabels = givenHierarchieLabels.concat(jskos['ancestors'].map((x) => x.prefLabel))
+      givenHierarchieLabels.push jskos['prefLabel']
+        
+      hierarchieParts = []
+      for value, key in givenHierarchieLabels
+          hierarchieLevelLabel = ''
+          if desiredLanguage.length == 2
+            # if a preflabel exists in given frontendLanguage or without language (person / corporate)
+            if value[desiredLanguage] || value['zxx'] || value['und'] || value['mus'] || value['mil']
+              if value?[desiredLanguage]
+                hierarchieLevelLabel = value[desiredLanguage]
+              else if value['zxx']
+                hierarchieLevelLabel = value['zxx']
+              else if value['und']
+                hierarchieLevelLabel = value['und']
+              else if value['mis']
+                hierarchieLevelLabel = value['mis']
+              else if value['mul']
+                hierarchieLevelLabel = value['mul']
 
-      if desiredLanguage.length == 2
-        # if a preflabel exists in given frontendLanguage or without language (person / corporate)
-        if jskos['prefLabel'][desiredLanguage] || jskos['prefLabel']['zxx'] || jskos['prefLabel']['und'] || jskos['prefLabel']['mus'] || jskos['prefLabel']['mil']
-          if jskos['prefLabel']?[desiredLanguage]
-            prefLabel = jskos['prefLabel'][desiredLanguage]
-          else if jskos['prefLabel']['zxx']
-            prefLabel = jskos['prefLabel']['zxx']
-          else if jskos['prefLabel']['und']
-            prefLabel = jskos['prefLabel']['und']
-          else if jskos['prefLabel']['mis']
-            prefLabel = jskos['prefLabel']['mis']
-          else if jskos['prefLabel']['mul']
-            prefLabel = jskos['prefLabel']['mul']
+          # if no conceptName is given yet (f.e. via scripted imports..)
+          if ! hierarchieLevelLabel
+            if value['de']
+              hierarchieLevelLabel = value['de']
+            else if value['en']
+              hierarchieLevelLabel = value['en']
+            else
+              hierarchieLevelLabel = value[Object.keys(value)[0]]
+          hierarchieParts.push hierarchieLevelLabel
+            
+      hierarchieLabelGenerated = hierarchieParts.join(' ➔ ')
 
-      # if no conceptName is given yet (f.e. via scripted imports..)
-      if ! prefLabel
-        if jskos.prefLabel?.de
-          prefLabel = jskos.prefLabel.de
-        else if jskos.prefLabel?.en
-          prefLabel = jskos.prefLabel.en
-        else
-          prefLabel = jskos.prefLabel[Object.keys(jskos.prefLabel)[0]]
+      hierarchieLabelGenerated
+
+    
+  @getConceptNameFromJSKOSObject: (jskos, desiredLanguage, labelWithHierarchie = false) ->
+      prefLabel = '';
+
+      if labelWithHierarchie
+        prefLabel = @.getHierarchieLabel(jskos, desiredLanguage)
+      else
+          if typeof $$ != "undefined"
+            prefLabelFallback = $$("custom.data.type.dante.modal.form.popup.treeview.nopreflabel")
+          else
+            prefLabelFallback = 'kein Label gefunden'
+
+          if ! jskos['prefLabel']
+            return prefLabelFallback
+
+          if desiredLanguage.length == 2
+            # if a preflabel exists in given frontendLanguage or without language (person / corporate)
+            if jskos['prefLabel'][desiredLanguage] || jskos['prefLabel']['zxx'] || jskos['prefLabel']['und'] || jskos['prefLabel']['mus'] || jskos['prefLabel']['mil']
+              if jskos['prefLabel']?[desiredLanguage]
+                prefLabel = jskos['prefLabel'][desiredLanguage]
+              else if jskos['prefLabel']['zxx']
+                prefLabel = jskos['prefLabel']['zxx']
+              else if jskos['prefLabel']['und']
+                prefLabel = jskos['prefLabel']['und']
+              else if jskos['prefLabel']['mis']
+                prefLabel = jskos['prefLabel']['mis']
+              else if jskos['prefLabel']['mul']
+                prefLabel = jskos['prefLabel']['mul']
+
+          # if no conceptName is given yet (f.e. via scripted imports..)
+          if ! prefLabel
+            if jskos.prefLabel?.de
+              prefLabel = jskos.prefLabel.de
+            else if jskos.prefLabel?.en
+              prefLabel = jskos.prefLabel.en
+            else
+              prefLabel = jskos.prefLabel[Object.keys(jskos.prefLabel)[0]]
 
       prefLabel
 
 
-  ###
-  @name         getFullTextFromJSKOSObject
-  @description  This function generates the _fulltext-Object, which is required for search
-                   Structure is documented here: https://docs.easydb.de/en/technical/plugins/customdatatype/#general-keys
-  @param        {object}                JSKOS                 a jskos-object
-  @param        {array}                 databaseLanguages     a list of easydb5-languages
-  @return       {object}                returns _standard-Object
-  ###
 
   @getFullTextFromJSKOSObject: (object, databaseLanguages = false) ->
 
@@ -140,7 +256,8 @@ class DANTEUtil
       'note'
       'changeNote'
       'startPlace'
-      'endPlace'
+      'endPlace',
+      'ancestors'
     ]
 
     # parse all object-keys and add all values to fulltext
@@ -201,14 +318,8 @@ class DANTEUtil
     return _fulltext
 
 
-  ###
-  @name         getStandardFromJSKOSObject
-  @description  This function generates the _standard-Object, which is required for display-purposes
-                   Structure is documented here: https://docs.easydb.de/en/technical/plugins/customdatatype/#general-keys
-  @param        {object}     JSKOS     a jskos-object
-  @return       {object}              returns _standard-Object
-  ###
-  @getStandardFromJSKOSObject: (JSKOS, databaseLanguages = false) ->
+
+  @getStandardFromJSKOSObject: (JSKOS, databaseLanguages = false, labelWithHierarchie = false) ->
 
     shortenedDatabaseLanguages = databaseLanguages.map((value, key, array) ->
       value.split('-').shift()
@@ -231,8 +342,9 @@ class DANTEUtil
       # get shortened version
       shortenedLanguage = l10nObjectKey.split('-')[0]
       # add to l10n
-      if JSKOS.prefLabel[shortenedLanguage]
-        l10nObject[l10nObjectKey] = JSKOS.prefLabel[shortenedLanguage]
+      prefLabel = @.getConceptNameFromJSKOSObject(JSKOS, shortenedLanguage, labelWithHierarchie)
+      if prefLabel
+        l10nObject[l10nObjectKey] = prefLabel
         hasl10n = true
 
     # if l10n, yet not in all languages
@@ -260,11 +372,7 @@ class DANTEUtil
     return _standard
 
 
-  ###
-  @name         getFacetTermFromJSKOSObject
-  @description  generates a json-structure, which is only used for facetting (aka filter) in frontend
-  ###
-  @getFacetTermFromJSKOSObject: (JSKOS, databaseLanguages) ->
+  @getFacetTermFromJSKOSObject: (JSKOS, databaseLanguages, labelWithHierarchie) ->
 
     shortenedDatabaseLanguages = databaseLanguages.map((value, key, array) ->
       value.split('-').shift()
@@ -289,9 +397,11 @@ class DANTEUtil
     for l10nObjectKey, l10nObjectValue of l10nObject
       # get shortened version
       shortenedLanguage = l10nObjectKey.split('-')[0]
+        
       # add to l10n
-      if JSKOS.prefLabel[shortenedLanguage]
-        l10nObject[l10nObjectKey] = JSKOS.prefLabel[shortenedLanguage]
+      prefLabel = @.getConceptNameFromJSKOSObject(JSKOS, shortenedLanguage, labelWithHierarchie)
+      if prefLabel
+        l10nObject[l10nObjectKey] = prefLabel
         l10nObject[l10nObjectKey] = l10nObject[l10nObjectKey] + '@$@' + JSKOS.uri
         hasl10n = true
 
@@ -300,7 +410,7 @@ class DANTEUtil
     if hasl10n
       for l10nObjectKey, l10nObjectValue of l10nObject
         if l10nObject[l10nObjectKey] == ''
-          l10nObject[l10nObjectKey] = JSKOS.prefLabel[Object.keys(JSKOS.prefLabel)[0]]
+          l10nObject[l10nObjectKey] = prefLabel
           l10nObject[l10nObjectKey] = l10nObject[l10nObjectKey] + '@$@' + JSKOS.uri
 
     # if no l10n yet

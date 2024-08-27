@@ -93,6 +93,10 @@ custom_types:
           parameters:
             value:
               type: bool
+        - name: label_with_hierarchie
+          parameters:
+            value:
+              type: bool
         - name: default_concept_uri
           parameters:
             value:

@@ -48,6 +48,10 @@
 
 /* fylr */
 
+.ez5-custom-data-type-dante .dante-render-button-buttonbar {
+     max-width: 92%;
+}
+
 .cui-input.pluginDirectSelectEditSearchFylr input {
 	border-radius: 0 !important;
 }
@@ -64,4 +68,86 @@
   border-bottom: 0 !important;
   border-left: 1px solid #ededed !important;
   margin-left: 1px;
+}
+
+/* result in popover with paging */
+
+.resultsDisplayPane {
+     background-color: white !important;
+     margin-left: 8px;
+     padding-bottom: 8px;
+}
+
+.resultsDisplayPane > .cui-vertical-layout-top {
+     background-color: #f5f5f5;
+}
+
+.resultsDisplayPane > .cui-vertical-layout-top > .cui-pane-header{
+     padding-left: 0px;
+}
+
+.resultsDisplayPane.dante-popover-results-paginator-loading .cui-vertical-layout-center {
+     align-items: center;
+     justify-content: center;
+}
+
+.dante-plugin-popover-result-row-pane {
+    min-height: 34px;
+    margin-top: 8px;
+}
+
+.dante-plugin-popover-result-menu-button {
+    width: 95%;
+    background-color: #f5f5f5;
+    margin-left: 8px;
+}
+
+.dante-plugin-popover-result-menu-button .cui-button-visual {
+    border: none;
+    justify-content: left;
+}
+
+.dante-plugin-popover-result-menu-divider-label {
+    width: 95%;
+    border: none;
+    justify-content: left;
+    padding-bottom: 4px;
+    padding-top: 4px;
+    margin-left: 6px;
+}
+
+.dante-plugin-popover-result-menu-divider-label .cui-label-content {
+     padding: 0 .75rem;
+     font-weight: bold;
+}
+
+.dante-popover-paginator-button .cui-button-visual {
+     background-color: white;
+     border: none;
+}
+
+.dante-popover-paginator-button.active-page .cui-button-visual {
+     background-color: #ff5724;
+     color: white;
+     cursor: default;
+}
+
+.dante-popover-paginator-button.active-page .cui-button-visual:hover {
+     background-color: #ff5724;
+     color: white;
+     cursor: default;
+}
+
+.dante-popover-paginator-button.ellipsis {
+     cursor: default;
+}
+
+.dante-popover-paginator-button.ellipsis .cui-button-visual {
+     background-color: transparent;
+     cursor: default;
+}
+
+.dante-popover-paginator-button.ellipsis .cui-button-visual:hover {
+     background-color: transparent;
+     cursor: default;
 }

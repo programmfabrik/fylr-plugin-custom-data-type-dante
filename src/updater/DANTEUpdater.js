@@ -18,7 +18,7 @@ if (process.argv.length >= 3) {
 
 function hasChanges(objectOne, objectTwo) {
     var len;
-    const ref = ["conceptName", "conceptURI", "_standard", "_fulltext", "conceptAncestors", "frontendLanguage", "conceptNameChosenByHand", "facetTerm"];
+    const ref = ["conceptName", "conceptURI", "_standard", "_fulltext", "conceptAncestors", "frontendLanguage", "conceptNameChosenByHand", "conceptNameWithHierarchie", "facetTerm"];
     for (let i = 0, len = ref.length; i < len; i++) {
         let key = ref[i];
         if (!DANTEUtil.isEqual(objectOne[key], objectTwo[key])) {
@@ -58,8 +58,8 @@ main = (payload) => {
                     "personal": 2
                 },
                 "log": ["started logging"]
-            })
-            break
+            });
+            break;
         case "update":
 
             ////////////////////////////////////////////////////////////////////////////
@@ -153,9 +153,15 @@ main = (payload) => {
                                 }
                             }
 
+                            // conceptNameWithHierarchie?
+                            if (!originalCdata.conceptNameWithHierarchie) {
+                                newCdata.conceptNameWithHierarchie = false;
+                            } else {
+                                newCdata.conceptNameWithHierarchie = true;
+                            }
                             // save conceptName
                             if (!originalCdata.conceptNameChosenByHand) {
-                                newCdata.conceptName = DANTEUtil.getConceptNameFromJSKOSObject(resultJSON, desiredLanguage);
+                                newCdata.conceptName = DANTEUtil.getConceptNameFromJSKOSObject(resultJSON, desiredLanguage, newCdata.conceptNameWithHierarchie);
                                 newCdata.conceptNameChosenByHand = false;
                             } else {
                                 newCdata.conceptName = originalCdata.conceptName;
@@ -167,10 +173,9 @@ main = (payload) => {
                             // save _fulltext
                             newCdata._fulltext = DANTEUtil.getFullTextFromJSKOSObject(resultJSON, databaseLanguages);
                             // save _standard
-                            newCdata._standard = DANTEUtil.getStandardFromJSKOSObject(resultJSON, databaseLanguages);
+                            newCdata._standard = DANTEUtil.getStandardFromJSKOSObject(resultJSON, databaseLanguages, newCdata.conceptNameWithHierarchie);
                             // save facet
-                            newCdata.facetTerm = DANTEUtil.getFacetTermFromJSKOSObject(resultJSON, databaseLanguages);
-
+                            newCdata.facetTerm = DANTEUtil.getFacetTermFromJSKOSObject(resultJSON, databaseLanguages, newCdata.conceptNameWithHierarchie);
                             // save frontend language (same as given)
                             newCdata.frontendLanguage = originalCdata.frontendLanguage;
 
@@ -219,7 +224,7 @@ outputData = (data) => {
         "status_code": 200,
         "body": data
     }
-    process.stdout.write(JSON.stringify(out))
+    process.stdout.write(JSON.stringify(out));
     process.exit(0);
 }
 
@@ -305,7 +310,7 @@ outputErr = (err2) => {
                     }
                 });
             }).on('error', err => {
-                console.error('Error while receiving data from api.dante.fi: ', err.message);
+                console.error('Error while receiving data from api.dante.gbv.de: ', err.message);
             });
         }).catch(error => {
             console.error('Es gab einen Fehler beim Laden der Konfiguration:', error);
