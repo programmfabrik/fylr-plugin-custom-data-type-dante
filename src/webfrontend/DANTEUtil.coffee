@@ -144,6 +144,8 @@ class DANTEUtil
       # collect all the preflabels of record and ancestors
       givenHierarchieLabels = []
       givenHierarchieLabels = givenHierarchieLabels.concat(jskos['ancestors'].map((x) => x.prefLabel))
+      #revers 
+      givenHierarchieLabels = givenHierarchieLabels.reverse()
       givenHierarchieLabels.push jskos['prefLabel']
         
       hierarchieParts = []
