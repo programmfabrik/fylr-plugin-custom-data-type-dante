@@ -123,43 +123,57 @@ CustomDataTypeDANTE.prototype.getJSKOSPreview = (data, mapbox_access_token = fal
   # Karte, zeige nur einen Ort
   location = ''
   if data.location
-    if data.location.length > 0
     # if mapbox-token given
-      if mapbox_access_token
-        for key, value of data.location
-          # wrap value in "geometry"
-          value = JSON.parse('{"geometry": ' + JSON.stringify(value) + '}')
+    if mapbox_access_token
+      # default feature?
+      if data.location.type == 'Point' || data.location.type == 'Polygon' || data.location.type == 'LineString'
+        data.location = [data.location]
+      # geometryCollection?
+      if data.location.type == 'GeometryCollection'
+        data.location = data.location.geometries;
+      # MultiPolygon?
+      if data.location.type == 'MultiPolygon'
+        locations = []
+        for key, value of data.location.coordinates
+          polygon = JSON.parse('{"type": "Polygon","coordinates": []}')
+          polygon.coordinates = value[0]
+          locations.push polygon
+        data.location = locations
 
-          # generates static mapbox-map via geojson
-          htmlContent = '{"type": "FeatureCollection","features": []}'
+      for key, value of data.location
+        # wrap value in "geometry"
+        value = JSON.parse('{"geometry": ' + JSON.stringify(value) + '}')
 
-          # compare to https://www.mapbox.com/mapbox.js/example/v1.0.0/static-map-from-geojson-with-geo-viewport/
-          jsonStr = '{"type": "FeatureCollection","features": []}'
-          json = JSON.parse(jsonStr)
+        # generates static mapbox-map via geojson
+        htmlContent = '{"type": "FeatureCollection","features": []}'
 
-          json.features.push value
+        # compare to https://www.mapbox.com/mapbox.js/example/v1.0.0/static-map-from-geojson-with-geo-viewport/
+        jsonStr = '{"type": "FeatureCollection","features": []}'
+        json = JSON.parse(jsonStr)
 
-          bounds = geojsonExtent(json)
-          if bounds
-            size = [
-              500
-              300
-            ]
-            vp = geoViewport.viewport(bounds, size)
-            encodedGeoJSON = value
-            encodedGeoJSON.properties = {}
-            encodedGeoJSON.type = "Feature"
-            encodedGeoJSON.properties['stroke-width'] = 4
-            encodedGeoJSON.properties['stroke'] = '#C20000'
-            encodedGeoJSON = JSON.stringify(encodedGeoJSON)
-            encodedGeoJSON = encodeURIComponent(encodedGeoJSON)
-            if vp.zoom > 16
-              vp.zoom = 15;
-            imageSrc = 'https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/geojson(' + encodedGeoJSON + ')/' +  vp.center.join(',') + ',' + vp.zoom + '/' + size.join('x') + '@2x?access_token=' + mapbox_access_token
-            htmlContent = "<div class=\"mapImage\" style=\"background-image: url('" + imageSrc  + "');\"></div>"
-            location += htmlContent
-        if location != ''
-          html += '<h4>' + $$('custom.data.type.dante.modal.form.popup.jskospreview.georef') + '</h4>' + location
+        json.features.push value
+
+        bounds = geojsonExtent(json)
+        if bounds
+          size = [
+            500
+            300
+          ]
+          vp = geoViewport.viewport(bounds, size)
+          encodedGeoJSON = value
+          encodedGeoJSON.properties = {}
+          encodedGeoJSON.type = "Feature"
+          encodedGeoJSON.properties['stroke-width'] = 4
+          encodedGeoJSON.properties['stroke'] = '#C20000'
+          encodedGeoJSON = JSON.stringify(encodedGeoJSON)
+          encodedGeoJSON = encodeURIComponent(encodedGeoJSON)
+          if vp.zoom > 16
+            vp.zoom = 15;
+          imageSrc = 'https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/geojson(' + encodedGeoJSON + ')/' +  vp.center.join(',') + ',' + vp.zoom + '/' + size.join('x') + '@2x?access_token=' + mapbox_access_token
+          htmlContent = "<div class=\"mapImage\" style=\"background-image: url('" + imageSrc  + "');\"></div>"
+          location += htmlContent
+      if location != ''
+        html += '<h4>' + $$('custom.data.type.dante.modal.form.popup.jskospreview.georef') + '</h4>' + location
 
   # Definitions ("de" first)
   definition = ''
