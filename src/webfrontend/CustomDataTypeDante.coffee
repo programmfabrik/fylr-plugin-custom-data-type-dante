@@ -177,7 +177,7 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
                         #############################################
                         # send jskos to dante and parse result
                         dante_ingest_xhr = new CUI.XHR
-                                                  url: "https://dev-api.dante.gbv.de/ingest"
+                                                  url: "https://api.dante.gbv.de/ingest"
                                                   timeout: 10000
                                                   method: 'POST'
                                                   body: newIngestString
@@ -988,22 +988,24 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
                             cdata = {}
                           data[that.name(opts)] = cdata
                           data.lastsaved = Date.now()
+                          console.log "element", element
+                          
                           CUI.Events.trigger
-                              node: element
+                              node: cdata_form # vorher "element"
                               type: "editor-changed"
-                          CUI.Events.trigger
-                              node: element
-                              type: "data-changed"
+                          #CUI.Events.trigger
+                          #    node: cdata_form # vorher "element"
+                          #    type: "data-changed"
                       )
                     else
                       data[that.name(opts)] = cdata
                       data.lastsaved = Date.now()
                       CUI.Events.trigger
-                          node: element
+                          node: cdata_form
                           type: "editor-changed"
-                      CUI.Events.trigger
-                          node: element
-                          type: "data-changed"
+                      #CUI.Events.trigger
+                      #    node: cdata_form # vorher "element"
+                      #    type: "data-changed" # vorher "element"
               fields: fields
 
       # if called from poolmanagerplugin via DataFieldProxys don't call CUI.Form.start(),
