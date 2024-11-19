@@ -145,55 +145,61 @@ main = (payload) => {
 
                             resultJSON = resultJSON[0];
 
-                            // get desired language for conceptName. This is frontendlanguage from original data or fallback
-                            let desiredLanguage = defaultLanguage;
-                            if (originalCdata.frontendLanguage) {
-                                if (originalCdata.frontendLanguage.length == 2) {
-                                    desiredLanguage = originalCdata.frontendLanguage;
+                            // basic check if valid jskos
+                            if (resultJSON.uri && resultJSON.type) {
+                                // get desired language for conceptName. This is frontendlanguage from original data or fallback
+                                let desiredLanguage = defaultLanguage;
+                                if (originalCdata.frontendLanguage) {
+                                    if (originalCdata.frontendLanguage.length == 2) {
+                                        desiredLanguage = originalCdata.frontendLanguage;
+                                    }
                                 }
+
+                                // conceptNameWithHierarchie?
+                                if (!originalCdata.conceptNameWithHierarchie) {
+                                    newCdata.conceptNameWithHierarchie = false;
+                                } else {
+                                    newCdata.conceptNameWithHierarchie = true;
+                                }
+                                // save conceptName
+                                if (!originalCdata.conceptNameChosenByHand) {
+                                    newCdata.conceptName = DANTEUtil.getConceptNameFromJSKOSObject(resultJSON, desiredLanguage, newCdata.conceptNameWithHierarchie);
+                                    newCdata.conceptNameChosenByHand = false;
+                                } else {
+                                    newCdata.conceptName = originalCdata.conceptName;
+                                    newCdata.conceptNameChosenByHand = true;
+                                }
+
+                                // save conceptURI
+                                newCdata.conceptURI = uri;
+                                // save _fulltext
+                                newCdata._fulltext = DANTEUtil.getFullTextFromJSKOSObject(resultJSON, databaseLanguages);
+                                // save _standard
+                                newCdata._standard = DANTEUtil.getStandardFromJSKOSObject(resultJSON, databaseLanguages, newCdata.conceptNameWithHierarchie);
+                                // save facet
+                                newCdata.facetTerm = DANTEUtil.getFacetTermFromJSKOSObject(resultJSON, databaseLanguages, newCdata.conceptNameWithHierarchie);
+                                // save frontend language (same as given)
+                                newCdata.frontendLanguage = originalCdata.frontendLanguage;
+
+                                // ancestors
+                                newCdata.conceptAncestors = '';
+                                let conceptAncestors = [];
+
+                                for (i = 0, len = resultJSON.ancestors.length; i < len; i++) {
+                                    conceptAncestors.push(resultJSON.ancestors[i].uri);
+                                }
+                                // add own uri to ancestor-uris
+                                conceptAncestors.push(resultJSON.uri);
+                                // merge ancestors to string
+                                newCdata.conceptAncestors = conceptAncestors.join(' ');
+
+                                if (hasChanges(payload.objects[index].data, newCdata)) {
+                                    payload.objects[index].data = newCdata;
+                                } else {}
                             }
-
-                            // conceptNameWithHierarchie?
-                            if (!originalCdata.conceptNameWithHierarchie) {
-                                newCdata.conceptNameWithHierarchie = false;
-                            } else {
-                                newCdata.conceptNameWithHierarchie = true;
+                            else {
+                                console.error("Empty JSKOS at " + uri + "?")
                             }
-                            // save conceptName
-                            if (!originalCdata.conceptNameChosenByHand) {
-                                newCdata.conceptName = DANTEUtil.getConceptNameFromJSKOSObject(resultJSON, desiredLanguage, newCdata.conceptNameWithHierarchie);
-                                newCdata.conceptNameChosenByHand = false;
-                            } else {
-                                newCdata.conceptName = originalCdata.conceptName;
-                                newCdata.conceptNameChosenByHand = true;
-                            }
-
-                            // save conceptURI
-                            newCdata.conceptURI = uri;
-                            // save _fulltext
-                            newCdata._fulltext = DANTEUtil.getFullTextFromJSKOSObject(resultJSON, databaseLanguages);
-                            // save _standard
-                            newCdata._standard = DANTEUtil.getStandardFromJSKOSObject(resultJSON, databaseLanguages, newCdata.conceptNameWithHierarchie);
-                            // save facet
-                            newCdata.facetTerm = DANTEUtil.getFacetTermFromJSKOSObject(resultJSON, databaseLanguages, newCdata.conceptNameWithHierarchie);
-                            // save frontend language (same as given)
-                            newCdata.frontendLanguage = originalCdata.frontendLanguage;
-
-                            // ancestors
-                            newCdata.conceptAncestors = '';
-                            let conceptAncestors = [];
-
-                            for (i = 0, len = resultJSON.ancestors.length; i < len; i++) {
-                                conceptAncestors.push(resultJSON.ancestors[i].uri);
-                            }
-                            // add own uri to ancestor-uris
-                            conceptAncestors.push(resultJSON.uri);
-                            // merge ancestors to string
-                            newCdata.conceptAncestors = conceptAncestors.join(' ');
-
-                            if (hasChanges(payload.objects[index].data, newCdata)) {
-                                payload.objects[index].data = newCdata;
-                            } else {}
                         }
                     } else {
                         console.error('No matching record found');
