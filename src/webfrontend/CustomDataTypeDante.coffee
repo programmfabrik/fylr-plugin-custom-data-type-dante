@@ -1,3 +1,15 @@
+# get all the dante-vocs, needed later for labeldisplay
+DANTEVocs = []
+DANTEVocsNotationTranslations = [];
+if DANTEVocs.length == 0
+  getVocs_xhr = { "xhr" : undefined }
+  getVocs_xhr.xhr = new (CUI.XHR)(url: 'https://api.dante.gbv.de/voc&cache=1&limit=1000')
+  getVocs_xhr.xhr.start().done((data, status, statusText) ->
+    DANTEVocs = data
+    for key, voc of DANTEVocs
+      DANTEVocsNotationTranslations[voc.notation[0]] = voc.prefLabel
+  )
+
 class CustomDataTypeDANTE extends CustomDataTypeWithCommons
 
   #######################################################################
@@ -9,7 +21,7 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
   #######################################################################
   # return name of plugin
   getCustomDataTypeName: ->
-    "custom:base.custom-data-type-dante.dante"
+    return "custom:base.custom-data-type-dante.dante"
 
   #######################################################################
   # overwrite getCustomMaskSettings
@@ -735,8 +747,16 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
                      item =
                           divider: true
                      menu_items.push item
+                     # try to get translation for vocabNotation
+                     actualVocabTranslation = actualVocab
+                     if DANTEVocsNotationTranslations
+                       if DANTEVocsNotationTranslations[actualVocab]
+                         #if DANTEVocsNotationTranslations[actualVocab]
+                         frontendLanguage = that.getFrontendLanguage()
+                         if DANTEVocsNotationTranslations[actualVocab][frontendLanguage]
+                           actualVocabTranslation = DANTEVocsNotationTranslations[actualVocab][frontendLanguage]
                      item =
-                          label: actualVocab
+                          label: actualVocabTranslation
                      menu_items.push item
                      item =
                           divider: true
@@ -988,7 +1008,6 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
                             cdata = {}
                           data[that.name(opts)] = cdata
                           data.lastsaved = Date.now()
-                          console.log "element", element
                           
                           CUI.Events.trigger
                               node: cdata_form # vorher "element"
@@ -1194,10 +1213,11 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
 
             # set hits to "count"-label
             hits = search_xhr.xhr.getResponseHeader('x-total-count')
-            document
-              .getElementsByClassName('results-display-pane-count-label')[0]
-              .getElementsByClassName('cui-label-content')[0]
-              .innerHTML = $$('custom.data.type.dante.modal.form.popup.paging.label.count') + ' ' + hits
+            resultPaneLabel = document.getElementsByClassName('results-display-pane-count-label')[0]
+            if resultPaneLabel?
+              cuiLabelContent = resultPaneLabel.getElementsByClassName('cui-label-content')[0]
+              if cuiLabelContent?
+                cuiLabelContent.innerHTML = $$('custom.data.type.dante.modal.form.popup.paging.label.count') + ' ' + hits
 
             # build paginator
             pagesCount = Math.ceil(hits / dante_countSuggestions)
