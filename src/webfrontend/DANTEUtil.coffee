@@ -177,6 +177,14 @@ class DANTEUtil
             
       hierarchieLabelGenerated = hierarchieParts.join(' ➔ ')
 
+      if ! hierarchieLabelGenerated
+        if jskos.altLabel
+          hierarchieLabelGenerated = jskos.altLabel[Object.keys(jskos.altLabel)[0]][0]
+        else if jskos.hiddenLabel
+          hierarchieLabelGenerated = jskos.hiddenLabel[Object.keys(jskos.hiddenLabel)[0]][0]
+        else 
+          hierarchieLabelGenerated = $$("custom.data.type.dante.modal.form.popup.treeview.nopreflabel")
+
       hierarchieLabelGenerated
 
     
@@ -190,7 +198,6 @@ class DANTEUtil
             prefLabelFallback = $$("custom.data.type.dante.modal.form.popup.treeview.nopreflabel")
           else
             prefLabelFallback = 'kein Label gefunden'
-
           if ! jskos['prefLabel']
             return prefLabelFallback
 
@@ -216,6 +223,13 @@ class DANTEUtil
               prefLabel = jskos.prefLabel.en
             else
               prefLabel = jskos.prefLabel[Object.keys(jskos.prefLabel)[0]]
+              # Fallback if no preflabel exists
+              if ! prefLabel && jskos.altLabel
+                prefLabel = jskos.altLabel[Object.keys(jskos.altLabel)[0]][0]
+              if ! prefLabel && jskos.hiddenLabel
+                prefLabel = jskos.hiddenLabel[Object.keys(jskos.hiddenLabel)[0]][0]
+              if ! prefLabel
+                prefLabel = prefLabelFallback
 
       prefLabel
 
