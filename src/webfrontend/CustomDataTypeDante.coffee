@@ -1690,7 +1690,7 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
                 that.__getAdditionalTooltipInfo(encodedURI, tooltip, extendedInfo_xhr)
                 # loader, until details are xhred
                 new CUI.Label(icon: "spinner", text: $$('custom.data.type.dante.modal.form.popup.loadingstring'))
-			]
+      ]
     .DOM
 
   #######################################################################
