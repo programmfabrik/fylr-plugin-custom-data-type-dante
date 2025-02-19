@@ -50,6 +50,7 @@ As defined in `manifest.master.yml` this datatype can be configured:
 ## saved data
 * conceptName
     * Preferred label of the linked record
+* conceptNameChosenByHand
 * conceptURI
     * URI to linked record
 * conceptFulltext
@@ -61,6 +62,7 @@ As defined in `manifest.master.yml` this datatype can be configured:
 * _standard
     * easydb-standard
 * facetTerm
+* frontendLanguage
 
 ## sources
 
