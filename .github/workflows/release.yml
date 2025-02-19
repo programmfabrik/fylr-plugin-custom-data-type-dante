@@ -12,6 +12,9 @@ jobs:
       - name: Install coffeescript-compiler
         run: sudo apt-get install coffeescript
 
+      - name: Check CoffeeScript version
+        run: coffee -v
+
       - name: Checkout
         uses: actions/checkout@v2
         with:
