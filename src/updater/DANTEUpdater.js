@@ -61,7 +61,6 @@ main = (payload) => {
             });
             break;
         case "update":
-
             ////////////////////////////////////////////////////////////////////////////
             // run dante-api-call for every given uri
             ////////////////////////////////////////////////////////////////////////////
@@ -149,11 +148,15 @@ main = (payload) => {
                             if (resultJSON.uri && resultJSON.type) {
                                 // get desired language for conceptName. This is frontendlanguage from original data or fallback
                                 let desiredLanguage = defaultLanguage;
-                                if (originalCdata.frontendLanguage) {
-                                    if (originalCdata.frontendLanguage.length == 2) {
-                                        desiredLanguage = originalCdata.frontendLanguage;
-                                    }
+                                if (originalCdata?.frontendLanguage?.length == 2) {
+                                    desiredLanguage = originalCdata.frontendLanguage;
                                 }
+                                // if no frontendLanguage exists in originalData: add
+                                else {
+                                    originalCdata.frontendLanguage = defaultLanguage;
+                                }
+                                // save frontend language (same as given or default)
+                                newCdata.frontendLanguage = originalCdata.frontendLanguage;
 
                                 // conceptNameWithHierarchie?
                                 if (!originalCdata.conceptNameWithHierarchie) {
@@ -161,6 +164,7 @@ main = (payload) => {
                                 } else {
                                     newCdata.conceptNameWithHierarchie = true;
                                 }
+                                
                                 // save conceptName
                                 if (!originalCdata.conceptNameChosenByHand) {
                                     newCdata.conceptName = DANTEUtil.getConceptNameFromJSKOSObject(resultJSON, desiredLanguage, newCdata.conceptNameWithHierarchie);
@@ -178,8 +182,6 @@ main = (payload) => {
                                 newCdata._standard = DANTEUtil.getStandardFromJSKOSObject(resultJSON, databaseLanguages, newCdata.conceptNameWithHierarchie);
                                 // save facet
                                 newCdata.facetTerm = DANTEUtil.getFacetTermFromJSKOSObject(resultJSON, databaseLanguages, newCdata.conceptNameWithHierarchie);
-                                // save frontend language (same as given)
-                                newCdata.frontendLanguage = originalCdata.frontendLanguage;
 
                                 // ancestors
                                 newCdata.conceptAncestors = '';
@@ -252,6 +254,29 @@ outputErr = (err2) => {
 
     process.stdin.setEncoding('utf8');
 
+    ////////////////////////////////////////////////////////////////////////////
+    // check if hour-restriction is set
+    ////////////////////////////////////////////////////////////////////////////
+
+    if(info?.config?.plugin?.['custom-data-type-dante']?.config?.update_dante?.restrict_time === true) {
+        dante_config = info.config.plugin['custom-data-type-dante'].config.update_dante;
+        // check if hours are configured
+        if(dante_config?.from_time !== false && dante_config?.to_time !== false) {
+            const now = new Date();            
+            const hour = now.getHours();
+            // check if hours do not match
+            if(hour < dante_config.from_time && hour >= dante_config.to_time) {
+                // exit if hours do not match
+                outputData({
+                    "state": {
+                        "theend": 2,
+                        "log": ["hours do not match, cancel update"]
+                    }
+                });
+            }
+        }
+    }
+
     access_token = info && info.plugin_user_access_token;
     
     if(access_token) {
@@ -268,7 +293,7 @@ outputErr = (err2) => {
 
             frontendLanguages = config.system.config.languages.frontend;
 
-            const testDefaultLanguageConfig = config.plugin['custom-data-type-dante'].config.update_interval_dante.default_language;
+            const testDefaultLanguageConfig = config.plugin['custom-data-type-dante'].config.update_dante.default_language;
             if (testDefaultLanguageConfig) {
                 if (testDefaultLanguageConfig.length == 2) {
                     defaultLanguage = testDefaultLanguageConfig;
@@ -325,5 +350,4 @@ outputErr = (err2) => {
     else {
         console.error("kein Accesstoken gefunden");
     }
-
 })();

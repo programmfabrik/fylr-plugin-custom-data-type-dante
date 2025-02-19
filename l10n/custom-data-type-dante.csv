@@ -72,13 +72,12 @@ custom.data.type.dante.modal.form.popup.choose_expertsearchmode_.include_childre
 custom.data.type.dante.modal.form.popup.choose_expertsearchmode_label,Suchmodus für Expertensuche wählen,Select search mode for expert search
 custom.data.type.dante.modal.form.popup.choose_expertsearchmode_label2,Was wollen Sie finden? Nur exakte Treffer oder auch alle Kinder und Kindeskinder ihrer Suchauswahl?,What do you want to find? Only exact hits or also all children and grandchildren in your search selection?
 custom.data.type.dante.modal.form.popup.choose_expertsearchmode_label3,Ausgewählt,Selected
-server.config.name.system.update_interval_dante,DANTE-Update-Einstellungen,DANTE-Update-Configuration
-server.config.parameter.system.update_interval_dante.days.label,Tage zwischen Updates,Days between updates
-server.config.parameter.system.update_interval_dante.dev_api.label,Nutze Beta-API,Use beta-API
-server.config.parameter.system.update_interval_dante.dev_api.checkbox,Aktiviere Entwicklungs-API,Activate Development-API
-server.config.parameter.system.update_interval_dante.test_api.label,Teste API,Test API
-server.config.parameter.system.update_interval_dante.test_api.checkbox,Teste die API vor dem Update,Test API before update
-server.config.parameter.system.update_interval_dante.default_language.label,Standard-Datensprache als Fallback für Update (ISO 639-1),Default-data-language (as fallback) for update (ISO 639-1)
+server.config.name.system.update_dante,DANTE-Update-Einstellungen,DANTE-Update-Configuration
+server.config.parameter.system.update_dante.restrict_time.label,Beschränke Updates auf bestimmte Stunden?,Restrict updates to specific hours?
+server.config.parameter.system.update_dante.restrict_time.checkbox,Ja - beschränken,Yes - restrict
+server.config.parameter.system.update_dante.from_time.label,Stunde von (Zahl 0-24),Hour from (Int 0-24)
+server.config.parameter.system.update_dante.to_time.label,Stunde bis (Zahl 0-24),Hour to (Int 0-24)
+server.config.parameter.system.update_dante.default_language.label,Standard-Datensprache als Fallback für Update (ISO 639-1),Default-data-language (as fallback) for update (ISO 639-1)
 custom.data.type.dante.config.parameter.schema.insert_allowed.value.label,Neu anlegen?,Add new?
 custom.data.type.dante.config.parameter.schema.insert_allowed.value.checkbox, Die Neuanlage von Datensätzen über das DANTE-Plugin erlauben (nicht im Dropdown-Modus möglich),Allow adding records via the DANTE plugin (not possible in dropdown-mode)
 custom.data.type.dante.config.parameter.schema.insert_username.value.label,Nutzername für das Neuanlegen (DANTE-Vokabular-Konfiguration),Username for adding (from DANTE vocabulary configuration)
