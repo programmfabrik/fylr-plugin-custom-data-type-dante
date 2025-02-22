@@ -145,7 +145,7 @@ main = (payload) => {
                             resultJSON = resultJSON[0];
 
                             // basic check if valid jskos
-                            if (resultJSON.uri && resultJSON.type) {
+                            if (resultJSON?.uri && resultJSON?.type) {
                                 // get desired language for conceptName. This is frontendlanguage from original data or fallback
                                 let desiredLanguage = defaultLanguage;
                                 if (originalCdata?.frontendLanguage?.length == 2) {
