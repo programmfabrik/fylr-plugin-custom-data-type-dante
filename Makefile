@@ -44,6 +44,7 @@ build: clean ## clean, compile, copy files to build folder
 				rm -rf src/tmp # clean tmp
 
 				cp l10n/custom-data-type-dante.csv build/$(PLUGIN_NAME)/l10n/customDataTypeDante.csv # copy l10n
+				tail -n+2 easydb-library/src/commons.l10n.csv >> build/$(PLUGIN_NAME)/l10n/customDataTypeDante.csv # copy commons
 
 				cp src/webfrontend/css/main.css build/$(PLUGIN_NAME)/webfrontend/customDataTypeDante.css # copy css
 				cp manifest.master.yml build/$(PLUGIN_NAME)/manifest.yml # copy manifest
