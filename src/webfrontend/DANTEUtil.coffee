@@ -78,7 +78,9 @@ class DANTEUtil
         # lock facetTerm in savedata
         cdata.facetTerm = DANTEUtil.getFacetTermFromJSKOSObject resultJSKOS, that.getDatabaseLanguages(), labelWithHierarchie
         # lock conceptAncestors
-        cdata.conceptAncestors = DANTEUtil.getConceptAncestorsFromJSKOS(resultJSKOS)
+        cdata.conceptAncestors = DANTEUtil.getConceptAncestorsFromJSKOS resultJSKOS
+        # lock geojson
+        cdata.conceptGeoJSON = DANTEUtil.getGeoJSONFromDANTEJSKOS resultJSKOS
 
         # is user allowed to choose label manually from list and not in expert-search?!
         if that.getCustomMaskSettings().allow_label_choice?.value && opts?.mode == 'editor'
@@ -385,6 +387,11 @@ class DANTEUtil
     # if l10n-object is not empty
     _standard.l10ntext = l10nObject
 
+    # add geo
+    geoJSON = @getGeoJSONFromDANTEJSKOS JSKOS
+    if geoJSON
+       _standard.geo =  geoJSON
+
     return _standard
 
 
@@ -447,3 +454,12 @@ class DANTEUtil
     _facet_term = l10nObject
 
     return _facet_term
+
+  @getGeoJSONFromDANTEJSKOS: (jskos) ->
+    geoJSON = false
+
+    if jskos?.location
+      if jskos.location != {} && jskos.location != []
+        geoJSON = jskos.location
+
+    return geoJSON
