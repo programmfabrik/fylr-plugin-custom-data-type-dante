@@ -10,7 +10,7 @@ if DANTEVocs.length == 0
       DANTEVocsNotationTranslations[voc.notation[0]] = voc.prefLabel
   )
 
-class CustomDataTypeDANTE extends CustomDataTypeWithCommons
+class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
 
   #######################################################################
   # use custom facet
@@ -22,6 +22,12 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
   # return name of plugin
   getCustomDataTypeName: ->
     return "custom:base.custom-data-type-dante.dante"
+
+
+  #######################################################################
+  # allows usage of "standard (geo)" in maskoptioons
+  supportsGeoStandard: 
+    ->true 
 
   #######################################################################
   # overwrite getCustomMaskSettings
@@ -1003,7 +1009,8 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommons
                       fulltext_xhr.start().done((detail_data, status, statusText) ->
                           cdata._fulltext = DANTEUtil.getFullTextFromJSKOSObject detail_data, that.getDatabaseLanguages()
                           cdata._standard= DANTEUtil.getStandardFromJSKOSObject detail_data, that.getDatabaseLanguages(), false
-                          cdata.facetTerm = DANTEUtil.getFacetTermFromJSKOSObject detail_data, that.getDatabaseLanguages(), false
+                          cdata.facetTerm = DANTEUtil.getFacetTermFromJSKOSObject detail_data, that.getDatabaseLanguages(), false                          
+                          cdata.conceptGeoJSON = DANTEUtil.getGeoJSONFromDANTEJSKOS detail_data
                           if ! cdata?.conceptURI
                             cdata = {}
                           data[that.name(opts)] = cdata

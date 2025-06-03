@@ -12,7 +12,9 @@ plugin:
   webfrontend:
     url: customDataTypeDante.js
     css: customDataTypeDante.css
-
+    dependencies:
+      - commons-library
+      
 base_url_prefix: "webfrontend"
 
 custom_types:
@@ -26,6 +28,8 @@ custom_types:
         type: text
       conceptSource:
         type: text
+      conceptGeoJSON:
+        type: geo_json
       facetTerm:
         type: text_l10n
     update:
