@@ -136,8 +136,9 @@ CustomDataTypeDANTE.prototype.getJSKOSPreview = (data, mapbox_access_token = fal
         locations = []
         for key, value of data.location.coordinates
           polygon = JSON.parse('{"type": "Polygon","coordinates": []}')
-          polygon.coordinates = value[0]
-          locations.push polygon
+          polygon.coordinates = [value[0]]          
+          if polygon.coordinates[0].length < 100
+            locations.push polygon
         data.location = locations
 
       for key, value of data.location
@@ -168,7 +169,7 @@ CustomDataTypeDANTE.prototype.getJSKOSPreview = (data, mapbox_access_token = fal
           encodedGeoJSON = JSON.stringify(encodedGeoJSON)
           encodedGeoJSON = encodeURIComponent(encodedGeoJSON)
           if vp.zoom > 16
-            vp.zoom = 15;
+            vp.zoom = 12;
           imageSrc = 'https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/geojson(' + encodedGeoJSON + ')/' +  vp.center.join(',') + ',' + vp.zoom + '/' + size.join('x') + '@2x?access_token=' + mapbox_access_token
           htmlContent = "<div class=\"mapImage\" style=\"background-image: url('" + imageSrc  + "');\"></div>"
           location += htmlContent
