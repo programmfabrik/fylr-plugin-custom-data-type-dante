@@ -13,9 +13,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 10 
+      - name: Install coffeescript-compiler
+        run: sudo apt-get install coffeescript
           
-      - name: Install CoffeeScript 1.x
-        run: npm install -g coffeescript@1.12.7
+      #- name: Install CoffeeScript 1.x
+      #  run: npm install -g coffeescript@1.12.7
 
       - name: Check CoffeeScript version
         run: coffee -v
