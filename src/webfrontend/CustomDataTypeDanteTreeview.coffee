@@ -298,7 +298,7 @@ class DANTE_ListViewTreeNode extends CUI.ListViewTreeNode
 
     #########################################
     # function isGuideTerm
-    isGuideTerm: (jskos) =>
+    isGuideTerm: (jskos) ->
         if 'http://vocab.getty.edu/ontology#GuideTerm' in jskos.type
           return true
         else
@@ -307,7 +307,7 @@ class DANTE_ListViewTreeNode extends CUI.ListViewTreeNode
 
     #########################################
     # function getChildren
-    getChildren: =>
+    getChildren: ->
         that = @
         dfr = new CUI.Deferred()
         children = []
@@ -354,7 +354,7 @@ class DANTE_ListViewTreeNode extends CUI.ListViewTreeNode
 
     #########################################
     # function isLeaf
-    isLeaf: =>
+    isLeaf: ->
         if @opts.hasNarrowers == true
             return false
         else
@@ -362,7 +362,7 @@ class DANTE_ListViewTreeNode extends CUI.ListViewTreeNode
 
     #########################################
     # function renderContent
-    renderContent: =>
+    renderContent: ->
         that = @
         extendedInfo_xhr = { "xhr" : undefined }
         d = CUI.dom.div()
