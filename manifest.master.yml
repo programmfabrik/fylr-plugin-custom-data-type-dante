@@ -118,6 +118,14 @@ custom_types:
             value:
               type: text
 base_config:
+  - name: debug_dante
+    group: debug_custom_data_type
+    parameters:
+      enable_debug:
+        type: bool
+        default: false
+        position: 0
+
   - name: update_dante
     group: update_custom_data_type
     parameters:

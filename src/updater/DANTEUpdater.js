@@ -16,6 +16,8 @@ if (process.argv.length >= 3) {
     info = JSON.parse(process.argv[2])
 }
 
+let debug = info?.config?.plugin?.['custom-data-type-dante']?.config?.debug_dante?.enable_debug === true
+
 function hasChanges(objectOne, objectTwo) {
     var len;
     const ref = ["conceptName", "conceptURI", "_standard", "_fulltext", "conceptAncestors", "frontendLanguage", "conceptNameChosenByHand", "conceptNameWithHierarchie", "facetTerm"];
@@ -53,6 +55,7 @@ function getConfigFromAPI() {
 main = (payload) => {
     switch (payload.action) {
         case "start_update":
+            logDebug("started logging");
             outputData({
                 "state": {
                     "personal": 2
@@ -108,6 +111,7 @@ main = (payload) => {
                 });
                 return Promise.all(results.map(result => result.data));
             }).then(function(data) {
+                let updatedObjects = 0;
                 let results = [];
                 data.forEach((data, index) => {
                     let url = requests[index].url;
@@ -197,6 +201,7 @@ main = (payload) => {
 
                                 if (hasChanges(payload.objects[index].data, newCdata)) {
                                     payload.objects[index].data = newCdata;
+                                    updatedObjects++;
                                 } else {}
                             }
                             else {
@@ -207,6 +212,8 @@ main = (payload) => {
                         console.error('No matching record found');
                     }
                 });
+                logDebug(payload.objects.length + " objects in payload");
+                logDebug(updatedObjects + " Objects with changes.");
                 outputData({
                     "payload": payload.objects,
                     "log": [payload.objects.length + " objects in payload"]
@@ -215,6 +222,7 @@ main = (payload) => {
             // send data back for update
             break;
         case "end_update":
+            logDebug("done logging")
             outputData({
                 "state": {
                     "theend": 2,
@@ -248,6 +256,12 @@ outputErr = (err2) => {
     process.exit(0);
 }
 
+logDebug = (message) =>{
+    if(!debug) return;
+
+    console.error("custom-data-type-dante: " + message)
+}
+
 (() => {
 
     let data = ""
@@ -257,22 +271,33 @@ outputErr = (err2) => {
     ////////////////////////////////////////////////////////////////////////////
     // check if hour-restriction is set
     ////////////////////////////////////////////////////////////////////////////
-
+    logDebug("===================================================");
+    logDebug("Debug: enabled");
+    logDebug("===================================================");
     if(info?.config?.plugin?.['custom-data-type-dante']?.config?.update_dante?.restrict_time === true) {
         dante_config = info.config.plugin['custom-data-type-dante'].config.update_dante;
+
+        
         // check if hours are configured
         if(dante_config?.from_time !== false && dante_config?.to_time !== false) {
             const now = new Date();            
             const hour = now.getHours();
+
+            logDebug("Hour " + hour)
+            logDebug("Before " + dante_config.from_time + " " + (hour < dante_config.from_time))
+            logDebug("After " + dante_config.to_time + " " + (hour >= dante_config.to_time))
             // check if hours do not match
             if(hour < dante_config.from_time && hour >= dante_config.to_time) {
                 // exit if hours do not match
+                logDebug("hours do not match, cancel update")
                 outputData({
                     "state": {
                         "theend": 2,
                         "log": ["hours do not match, cancel update"]
                     }
                 });
+            } else {
+                logDebug("hours do match, start update")
             }
         }
     }

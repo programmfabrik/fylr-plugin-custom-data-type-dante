@@ -72,6 +72,9 @@ custom.data.type.dante.modal.form.popup.choose_expertsearchmode_.include_childre
 custom.data.type.dante.modal.form.popup.choose_expertsearchmode_label,Suchmodus für Expertensuche wählen,Select search mode for expert search
 custom.data.type.dante.modal.form.popup.choose_expertsearchmode_label2,Was wollen Sie finden? Nur exakte Treffer oder auch alle Kinder und Kindeskinder ihrer Suchauswahl?,What do you want to find? Only exact hits or also all children and grandchildren in your search selection?
 custom.data.type.dante.modal.form.popup.choose_expertsearchmode_label3,Ausgewählt,Selected
+server.config.name.system.debug_dante,DANTE-Debug-Einstellungen,DANTE-Debug-Configuration
+server.config.parameter.system.debug_dante.enable_debug.label,Debug Modus,Debug mode
+server.config.parameter.system.debug_dante.enable_debug.checkbox,Aktiv,Active
 server.config.name.system.update_dante,DANTE-Update-Einstellungen,DANTE-Update-Configuration
 server.config.parameter.system.update_dante.restrict_time.label,Beschränke Updates auf bestimmte Stunden?,Restrict updates to specific hours?
 server.config.parameter.system.update_dante.restrict_time.checkbox,Ja - beschränken,Yes - restrict
