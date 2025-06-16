@@ -283,9 +283,6 @@ logDebug = (message) =>{
             const now = new Date();            
             const hour = now.getHours();
 
-            logDebug("Hour " + hour)
-            logDebug("Before " + dante_config.from_time + " " + (hour < dante_config.from_time))
-            logDebug("After " + dante_config.to_time + " " + (hour >= dante_config.to_time))
             // check if hours do not match
             if(hour < dante_config.from_time && hour >= dante_config.to_time) {
                 // exit if hours do not match
