@@ -413,6 +413,9 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
           filter._unset_filter = true
           return filter
 
+      else if data[key+":has_value"]
+        return @getHasValueFilter(data, key)
+
       # dropdown or popup without tree or use of searchbar: use sameas
       if ! that.renderPopupAsTreeview() || ! data[key]?.experthierarchicalsearchmode
         filter =
