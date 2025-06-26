@@ -478,10 +478,10 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
   # make tag for expert-search
   #######################################################################
   getQueryFieldBadge: (data) ->
-      if ! data[@name()]
-          value = $$("field.search.badge.without")
-      else if ! data[@name()]?.conceptURI
-          value = $$("field.search.badge.without")
+      if data["#{@name()}:unset"]
+        value = $$("text.column.badge.without")
+      else if data["#{@name()}:has_value"]
+        value = $$("field.search.badge.has_value")
       else
           value = data[@name()].conceptName
 
