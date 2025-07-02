@@ -1097,7 +1097,7 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
     if that.getCustomMaskSettings()?.mapbox_access_token?.value
       mapbox_access_token = that.getCustomMaskSettings().mapbox_access_token.value
     # start new request to DANTE-API
-    extendedInfo_xhr.xhr = new (CUI.XHR)(url: location.protocol + '//api.dante.gbv.de/data?uri=' + uri + '&format=json&properties=+ancestors,hiddenLabel,notation,scopeNote,definition,note,identifier,example,location,depiction,startDate,endDate,startPlace,endPlace&cache=1')
+    extendedInfo_xhr.xhr = new (CUI.XHR)(url: location.protocol + '//api.dante.gbv.de/data?uri=' + uri + '&format=json&properties=+ancestors,hiddenLabel,notation,scopeNote,definition,note,identifier,example,location,depiction,startDate,endDate,startPlace,endPlace,qualifiedRelations&cache=1')
     extendedInfo_xhr.xhr.start()
     .done((data, status, statusText) ->
       htmlContent = that.getJSKOSPreview(data, mapbox_access_token)

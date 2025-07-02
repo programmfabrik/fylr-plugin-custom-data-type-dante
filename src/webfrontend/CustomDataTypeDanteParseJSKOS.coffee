@@ -76,32 +76,70 @@ CustomDataTypeDANTE.prototype.getJSKOSPreview = (data, mapbox_access_token = fal
   if notations
     html += '<h4>' + $$('custom.data.type.dante.modal.form.popup.jskospreview.notations') + '</h4>' + notations
 
-  # startDate + startPlace
-  startPlaces = []
-  if data.startDate || data.startPlace
-    html += '<h4>' + $$('custom.data.type.dante.modal.form.popup.jskospreview.startDate') + '</h4>'
-    if data.startDate
-      html += data.startDate + '<br />'
-    if data.startPlace
-      for key, val of data.startPlace
-        startPlaces.push ' &#8226; ' + val.prefLabel.und
-      startPlaces = startPlaces.filter((item, i, ar) ->
-        ar.indexOf(item) == i
-      )
-      html += startPlaces.join('<br />')
+  # qualifiedRelation to HTML
+  qualifiedRelationToHTML = (qualifiedRelation, translationKey) ->
+    html = ''
+    titleSet = false
+    for qualifiedRelationKey, qualifiedRelationEntry of qualifiedRelation
+      # title
+      if translationKey and not titleSet
+        titleSet = true
+        html += '<h4>' + $$(translationKey) + '</h4>'
+      
+      # .resource.prefLabel
+      if qualifiedRelationEntry.resource.prefLabel
+        prefLabel = that.getPrefLabelFromJSKOS(qualifiedRelationEntry.resource)
+        html += '<span class="qualifiedRelationInfo cui-label-icon"><i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span> ' + prefLabel + '<br />'
 
-  # endDate + endPlace
-  endPlaces = []
-  if data.endDate || data.endPlace
-    html += '<h4>' + $$('custom.data.type.dante.modal.form.popup.jskospreview.endDate') + '</h4>'
-    if data.endDate
-      html += data.endDate + '<br />'
-    if data.endPlace
-      for key, val of data.endPlace
-        endPlaces.push ' &#8226; ' + val.prefLabel.und
-      endPlaces = endPlaces.filter (item, i, ar) ->
-        ar.indexOf(item) == i
-      html += endPlaces.join('<br />')
+      # .startdate + .enddate
+      if qualifiedRelationEntry.startDate || qualifiedRelationEntry.endDate
+        html += '<span class="qualifiedRelationInfo cui-label-icon"><i class="fa fa-calendar" aria-hidden="true"></i></span> '
+        if qualifiedRelationEntry.startDate
+          html += qualifiedRelationEntry.startDate + ' - '
+        if qualifiedRelationEntry.endDate
+          html += qualifiedRelationEntry.endDate + '<br />'
+
+      # .resource.place
+      if qualifiedRelationEntry.resource.place
+        places = []
+        for key, value of qualifiedRelationEntry.resource.place
+          if value.prefLabel
+            placeLabel = that.getPrefLabelFromJSKOS(value)
+            places.push ' &#8226; ' + placeLabel
+        if places.length > 0
+          html += '<span class="qualifiedRelationInfo cui-label-icon"><i class="fa fa-map-marker" aria-hidden="true"></i></span> ' + places.join('<br />') + '<br />'
+
+      # .resource.startDate + .resource.startDate
+      if qualifiedRelationEntry.resource.startDate || qualifiedRelationEntry.resource.endDate
+        html += '<span class="qualifiedRelationInfo cui-label-icon"><i class="fa fa-calendar" aria-hidden="true"></i></span> '
+        if qualifiedRelationEntry.resource.startDate
+          html += qualifiedRelationEntry.resource.startDate + ' - '
+        if qualifiedRelationEntry.resource.endDate
+          html += qualifiedRelationEntry.resource.endDate + '<br />'
+
+      # add a vertical line, if not the last entry
+      if (qualifiedRelationKey*1 + 1) < qualifiedRelation.length      
+        html += '<div class="qualifiedRelationsDeviderLine"></div>'
+        
+    return html
+  
+  qualifiedRelationsTableToEcho = 
+    'https://schema.org/gender' : 'custom.data.type.dante.modal.form.popup.jskospreview.gender'
+    'https://w3id.org/dpv/pd#MaritalStatus' : 'custom.data.type.dante.modal.form.popup.jskospreview.maritalStatus'
+    'http://www.cidoc-crm.org/cidoc-crm/P11i_participated_in' : 'custom.data.type.dante.modal.form.popup.jskospreview.participatedIn'
+    'https://schema.org/hasOccupation' : 'custom.data.type.dante.modal.form.popup.jskospreview.hasOccupation'
+    'http://gov.genealogy.net/ontology.owl#hasDenomination' : 'custom.data.type.dante.modal.form.popup.jskospreview.hasDenomination'
+    'https://www.wikidata.org/wiki/Property:P102' : 'custom.data.type.dante.modal.form.popup.jskospreview.hasPoliticalParty'
+    'https://schema.org/nationality' : 'custom.data.type.dante.modal.form.popup.jskospreview.nationality'
+    'https://www.w3.org/1999/02/22-rdf-syntax-ns#type' : 'custom.data.type.dante.modal.form.popup.jskospreview.type'
+
+  # Biographie / Chronologie (qualifiedRelations)
+  if data.qualifiedRelations
+    for qualifiedRelationKey, qualifiedRelation of data.qualifiedRelations
+      if qualifiedRelationsTableToEcho[qualifiedRelationKey]
+        translationKey = qualifiedRelationsTableToEcho[qualifiedRelationKey]
+        # title (translationKey) to title, but only once
+        html += qualifiedRelationToHTML(qualifiedRelation, translationKey)
 
   # Depiction
   if data.depiction
@@ -233,7 +271,7 @@ CustomDataTypeDANTE.prototype.getJSKOSPreview = (data, mapbox_access_token = fal
   if example
     html += '<h4>' + $$('custom.data.type.dante.modal.form.popup.jskospreview.example') + '</h4>' + example
 
-  html = '<style>.danteTooltip { padding: 10px; min-width:200px; } .danteTooltip h4 { margin-bottom: 0px; } .danteTooltip .danteTooltipAncestors { font-size: 13px; font-weight: bold; margin-top: 0px;} .danteTooltip .mapImage {background-color: #EFEFEF; position: relative; width: 100%; height: 150px; background-size: cover; background-repeat: no-repeat; margin-bottom: 6px; border-radius: 2px;} .danteTooltip .colorPreview{ width:100%; height: 100px; } .depictionPreview {background-size: contain; background-repeat: no-repeat; background-position: center center; width: 100%; height:150px; background-color: #EFEFEF;}</style><div class="danteTooltip">' + html + '</div>'
+  html = '<style>.danteTooltip .qualifiedRelationsDeviderLine {width: 100%; height: 6px;}  .danteTooltip { padding: 10px; min-width:200px; } .danteTooltip h4 { margin-bottom: 3px; margin-top: 9px; } .danteTooltip .danteTooltipAncestors { font-size: 13px; font-weight: bold; margin-top: 0px;} .danteTooltip .mapImage {background-color: #EFEFEF; position: relative; width: 100%; height: 150px; background-size: cover; background-repeat: no-repeat; margin-bottom: 6px; border-radius: 2px;} .danteTooltip .colorPreview{ width:100%; height: 100px; } .depictionPreview {background-size: contain; background-repeat: no-repeat; background-position: center center; width: 100%; height:150px; background-color: #EFEFEF;}</style><div class="danteTooltip">' + html + '</div>'
   return html
 
 

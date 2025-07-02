@@ -120,3 +120,13 @@ custom.data.type.dante.config.parameter.mask.label_with_hierarchie.value.label,L
 custom.data.type.dante.config.parameter.mask.label_with_hierarchie.value.checkbox,Hierarchie aktivieren,use hierarchie
 custom.data.type.dante.modal.form.popup.paging.label.page,Seite,Page
 custom.data.type.dante.modal.form.popup.paging.label.count,Treffer:,Hits:
+custom.data.type.dante.modal.form.popup.jskospreview.gender,Geschlecht,Gender
+custom.data.type.dante.modal.form.popup.jskospreview.maritalStatus,Familienstand,Marital Status
+custom.data.type.dante.modal.form.popup.jskospreview.participatedIn,Ereignisse,Events
+custom.data.type.dante.modal.form.popup.jskospreview.hasOccupation,Beruf,Occupation
+custom.data.type.dante.modal.form.popup.jskospreview.hasDenomination,Konfession,Denomination
+custom.data.type.dante.modal.form.popup.jskospreview.hasPoliticalParty,Politische Zugehörigkeit,Political Party
+custom.data.type.dante.modal.form.popup.jskospreview.nationality,Staatsangehörigkeit,Nationality
+custom.data.type.dante.modal.form.popup.jskospreview.type,Typ,Type
+
+
