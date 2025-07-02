@@ -87,12 +87,12 @@ CustomDataTypeDANTE.prototype.getJSKOSPreview = (data, mapbox_access_token = fal
         html += '<h4>' + $$(translationKey) + '</h4>'
       
       # .resource.prefLabel
-      if qualifiedRelationEntry.resource.prefLabel
+      if qualifiedRelationEntry?.resource?.prefLabel
         prefLabel = that.getPrefLabelFromJSKOS(qualifiedRelationEntry.resource)
         html += '<span class="qualifiedRelationInfo cui-label-icon"><i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span> ' + prefLabel + '<br />'
 
       # .startdate + .enddate
-      if qualifiedRelationEntry.startDate || qualifiedRelationEntry.endDate
+      if qualifiedRelationEntry?.startDate || qualifiedRelationEntry?.endDate
         html += '<span class="qualifiedRelationInfo cui-label-icon"><i class="fa fa-calendar" aria-hidden="true"></i></span> '
         if qualifiedRelationEntry.startDate
           html += qualifiedRelationEntry.startDate + ' - '
@@ -100,7 +100,7 @@ CustomDataTypeDANTE.prototype.getJSKOSPreview = (data, mapbox_access_token = fal
           html += qualifiedRelationEntry.endDate + '<br />'
 
       # .resource.place
-      if qualifiedRelationEntry.resource.place
+      if qualifiedRelationEntry?.resource?.place
         places = []
         for key, value of qualifiedRelationEntry.resource.place
           if value.prefLabel
@@ -110,7 +110,7 @@ CustomDataTypeDANTE.prototype.getJSKOSPreview = (data, mapbox_access_token = fal
           html += '<span class="qualifiedRelationInfo cui-label-icon"><i class="fa fa-map-marker" aria-hidden="true"></i></span> ' + places.join('<br />') + '<br />'
 
       # .resource.startDate + .resource.startDate
-      if qualifiedRelationEntry.resource.startDate || qualifiedRelationEntry.resource.endDate
+      if qualifiedRelationEntry?.resource?.startDate || qualifiedRelationEntry?.resource?.endDate
         html += '<span class="qualifiedRelationInfo cui-label-icon"><i class="fa fa-calendar" aria-hidden="true"></i></span> '
         if qualifiedRelationEntry.resource.startDate
           html += qualifiedRelationEntry.resource.startDate + ' - '
