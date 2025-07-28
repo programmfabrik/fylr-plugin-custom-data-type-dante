@@ -137,13 +137,13 @@ base_config:
         type: int
         default: 19
         min: 0
-        max: 24
+        max: 23
         position: 1
       to_time:
         type: int
         default: 4
         min: 0
-        max: 24
+        max: 23
         position: 2
       default_language:
         type: text

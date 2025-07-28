@@ -52,6 +52,18 @@ function getConfigFromAPI() {
         });
 }
 
+function isInTimeRange(currentHour, fromHour, toHour) {
+    if (fromHour === toHour) {
+        return true;
+    }
+
+    if (fromHour < toHour) { // same day
+        return currentHour >= fromHour && currentHour < toHour;
+    } else { // through the night
+        return currentHour >= fromHour || currentHour < toHour;
+    }
+} 
+
 main = (payload) => {
     switch (payload.action) {
         case "start_update":
@@ -284,7 +296,9 @@ logDebug = (message) =>{
             const hour = now.getHours();
 
             // check if hours do not match
-            if(hour < dante_config.from_time && hour >= dante_config.to_time) {
+            if (isInTimeRange(hour, dante_config.from_time, dante_config.to_time)){
+                logDebug("hours do match, start update")
+            } else {
                 // exit if hours do not match
                 logDebug("hours do not match, cancel update")
                 outputData({
@@ -293,8 +307,6 @@ logDebug = (message) =>{
                         "log": ["hours do not match, cancel update"]
                     }
                 });
-            } else {
-                logDebug("hours do match, start update")
             }
         }
     }
