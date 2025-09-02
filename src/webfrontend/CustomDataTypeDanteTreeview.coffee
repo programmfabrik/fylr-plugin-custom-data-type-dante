@@ -80,7 +80,7 @@ class DANTE_ListViewTree
                 popover: that.popover
                 cdata: that.cdata
                 cdata_form: that.cdata_form
-                guideTerm: DANTE_ListViewTreeNode.prototype.isGuideTerm(jskos)
+                guideTerm: DANTE_ListViewTreeNode.prototype.isGuideTerm(jskos, that.dante_opts)
                 context: that.context
                 vocParameter: that.vocParameter
                 dante_opts: that.dante_opts
@@ -161,7 +161,7 @@ class DANTE_ListViewTree
                   node = {
                     prefLabel: CustomDataTypeDANTE.prototype.getPrefLabelFromJSKOS(ancestorValue)
                     uri : ancestorValue.uri
-                    guideTerm : DANTE_ListViewTreeNode.prototype.isGuideTerm(ancestorValue)
+                    guideTerm : DANTE_ListViewTreeNode.prototype.isGuideTerm(ancestorValue, that.dante_opts)
                     children : {}
                   }
 
@@ -298,8 +298,12 @@ class DANTE_ListViewTreeNode extends CUI.ListViewTreeNode
 
     #########################################
     # function isGuideTerm
-    isGuideTerm: (jskos) ->
-        if 'http://vocab.getty.edu/ontology#GuideTerm' in jskos.type
+    isGuideTerm: (jskos, dante_opts) ->
+        callFromExpertSearch = false
+        if dante_opts?.callFromExpertSearch
+          if dante_opts.callFromExpertSearch == true
+            callFromExpertSearch = true
+        if 'http://vocab.getty.edu/ontology#GuideTerm' in jskos.type and not callFromExpertSearch
           return true
         else
           return false
@@ -342,7 +346,7 @@ class DANTE_ListViewTreeNode extends CUI.ListViewTreeNode
                 popover: that._popover
                 cdata: that._cdata
                 cdata_form: that._cdata_form
-                guideTerm: that.isGuideTerm(jskos)
+                guideTerm: that.isGuideTerm(jskos, that._dante_opts)
                 context: that._context
                 dante_opts: that._dante_opts
                 editor_layout: that._editor_layout

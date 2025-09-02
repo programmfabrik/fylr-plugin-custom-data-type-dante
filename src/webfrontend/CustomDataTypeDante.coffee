@@ -377,7 +377,7 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
 
       that.callFromExpertSearch = true
 
-      form = @renderEditorInput(data, '', {})
+      form = @renderEditorInput(data, '', opts)
 
       CUI.Events.listen
             type: "data-changed"
