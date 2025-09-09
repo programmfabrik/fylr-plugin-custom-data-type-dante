@@ -426,6 +426,8 @@ class DANTE_ListViewTreeNode extends CUI.ListViewTreeNode
                                 that._cdata._standard = DANTEUtil.getStandardFromJSKOSObject resultJSKOS, CustomDataTypeDANTE.prototype.getDatabaseLanguages(), labelWithHierarchie
                                 # save facet
                                 that._cdata.facetTerm = DANTEUtil.getFacetTermFromJSKOSObject resultJSKOS, CustomDataTypeDANTE.prototype.getDatabaseLanguages(), labelWithHierarchie
+                                # save geojson
+                                that._cdata.conceptGeoJSON = DANTEUtil.getGeoJSONFromDANTEJSKOS resultJSKOS
                                 # is this from exact search and user has to choose exact-search-mode?!
                                 if that._dante_opts?.callFromExpertSearch == true
                                   CustomDataTypeDANTE.prototype.__chooseExpertHierarchicalSearchMode(that._cdata, that._editor_layout, resultJSKOS, that._editor_layout, that._dante_opts)
