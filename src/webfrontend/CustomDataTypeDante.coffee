@@ -663,6 +663,11 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
         if that.getCustomMaskSettings().use_cache?.value
             cache = '&cache=1'
 
+        # ancestors-parameter?
+        ancestors = '&ancestors='
+        if that.getCustomMaskSettings().ancestors?.value
+            ancestors = '&ancestors=' + that.getCustomMaskSettings().ancestors?.value
+
         # voc parameter
         vocParameter = that.getActiveVocabularyName(cdata, opts)
         # voc parameter if called from poolmanagerplugin
@@ -670,7 +675,7 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
           vocParameter = that.getVocabularyNameFromDatamodel(opts)
 
         # start request
-        searchsuggest_xhr.xhr = new (CUI.XHR)(url: location.protocol + '//api.dante.gbv.de/suggest?search=' + dante_searchstring + '&voc=' + vocParameter + '&language=' + that.getFrontendLanguage() + '&limit=' + dante_countSuggestions + cache)
+        searchsuggest_xhr.xhr = new (CUI.XHR)(url: location.protocol + '//api.dante.gbv.de/suggest?search=' + dante_searchstring + '&voc=' + vocParameter + '&language=' + that.getFrontendLanguage() + '&limit=' + dante_countSuggestions + cache + ancestors)
         searchsuggest_xhr.xhr.start().done((data_1, status, statusText) ->
 
             extendedInfo_xhr = { "xhr" : undefined }
@@ -925,6 +930,12 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
                 if @getCustomMaskSettings()?.use_cache?.value
                     cache = '&cache=1'
 
+                # ancestors-parameter?
+                ancestors = '&ancestors='
+                if that.getCustomMaskSettings().ancestors?.value
+                    ancestors = '&ancestors=' + that.getCustomMaskSettings().ancestors?.value
+
+
                 # if multible vocabularys are given, show only the first one in dropdown
                 vocTest = @getVocabularyNameFromDatamodel(opts)
                 vocTest = vocTest.split('|')
@@ -934,7 +945,7 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
                   voc = @getVocabularyNameFromDatamodel(opts)
 
                 # start new request
-                searchsuggest_xhr = new (CUI.XHR)(url: location.protocol + '//api.dante.gbv.de/suggest?search=&voc=' + voc + '&language=' + @getFrontendLanguage() + '&limit=1000' + cache)
+                searchsuggest_xhr = new (CUI.XHR)(url: location.protocol + '//api.dante.gbv.de/suggest?search=&voc=' + voc + '&language=' + @getFrontendLanguage() + '&limit=1000' + cache + ancestors)
                 searchsuggest_xhr.start().done((data, status, statusText) ->
                     # read options for select
                     select_items = []
@@ -1210,6 +1221,11 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
         if that.getCustomMaskSettings().use_cache?.value
             cache = '&cache=1'
 
+        # ancestors-parameter?
+        ancestors = '&ancestors='
+        if that.getCustomMaskSettings().ancestors?.value
+            ancestors = '&ancestors=' + that.getCustomMaskSettings().ancestors?.value
+
         # voc parameter
         vocParameter = that.getActiveVocabularyName(cdata, opts)
         # voc parameter if called from poolmanagerplugin
@@ -1224,7 +1240,7 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
           queryProperties += ',ancestors'
 
         # start request
-        search_xhr.xhr = new (CUI.XHR)(url: location.protocol + '//api.dante.gbv.de/search?query=' + dante_searchstring + '&properties=' + queryProperties + '&voc=' + vocParameter + '&language=' + that.getFrontendLanguage() + '&limit=' + dante_countSuggestions + cache + '&offset=' + offset)
+        search_xhr.xhr = new (CUI.XHR)(url: location.protocol + '//api.dante.gbv.de/search?query=' + dante_searchstring + '&properties=' + queryProperties + '&voc=' + vocParameter + '&language=' + that.getFrontendLanguage() + '&limit=' + dante_countSuggestions + cache + '&offset=' + offset + ancestors)
         search_xhr.xhr.start().done((data, status, statusText) ->
         
             resultPane.removeClass('dante-popover-results-paginator-loading')

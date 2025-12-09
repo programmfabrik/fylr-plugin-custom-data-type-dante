@@ -42,7 +42,10 @@ class DANTE_ListViewTree
 
 
     #############################################################################
-    # get top hierarchy
+    # get top hierarchy / entrynode
+    # 2 ways:
+    #   - top of vocabulary (default)
+    #   - ancestors-parameter from custom mask settings
     #############################################################################
     getTopTreeView: (vocName, cache=1) ->
 
@@ -52,10 +55,18 @@ class DANTE_ListViewTree
         topTree_xhr = { "xhr" : undefined }
 
         if cache != 1 && cache != 0
-          cache = 1
+          cache = 1   
+
+        # default url = /voc/top
+        url = 'https://api.dante.gbv.de/voc/' + vocName + '/top?format=json&properties=+notation&limit=100&cache=' + cache
+
+        # ancestors-parameter given? -> use it as uri for narrower-request
+        ancestorURI = false
+        if that.context.getCustomMaskSettings().ancestors?.value
+            ancestorURI = that.context.getCustomMaskSettings().ancestors?.value     
+            url = 'https://api.dante.gbv.de/narrower/?uri=' + ancestorURI + '&format=json&properties=+notation&limit=100&cache=' + cache        
 
         # start new request to DANTE-API
-        url = location.protocol + '//api.dante.gbv.de/voc/' + vocName + '/top?format=json&properties=+notation&limit=100&cache=' + cache
         topTree_xhr.xhr = new (CUI.XHR)(url: url)
         topTree_xhr.xhr.start().done((data, status, statusText) ->
           # remove loading row (if there is one)
@@ -107,8 +118,13 @@ class DANTE_ListViewTree
         that = @
         searchTree_xhr = { "xhr" : undefined }
 
+        # ancestors-parameter given? -> use it as uri for narrower-request
+        ancestors = '&ancestors='
+        if that.context.getCustomMaskSettings().ancestors?.value
+            ancestors = '&ancestors=' + that.context.getCustomMaskSettings().ancestors?.value     
+
         # start new request to DANTE-API
-        url = location.protocol + '//api.dante.gbv.de/search?voc=' + vocName + '&query=' + searchTerm + '&format=json&limit=100&cache=' + cache + '&properties=+ancestors,notation&offset=0'
+        url = location.protocol + '//api.dante.gbv.de/search?voc=' + vocName + '&query=' + searchTerm + '&format=json&limit=100&cache=' + cache + ancestors + '&properties=+ancestors,notation&offset=0'
         searchTree_xhr.xhr = new (CUI.XHR)(url: url)
         searchTree_xhr.xhr.start().done((data, status, statusText) ->
 

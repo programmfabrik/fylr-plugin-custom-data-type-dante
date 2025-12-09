@@ -101,6 +101,10 @@ custom_types:
           parameters:
             value:
               type: bool
+        - name: ancestors
+          parameters:
+            value:
+              type: text
         - name: default_concept_uri
           parameters:
             value:
@@ -112,7 +116,7 @@ custom_types:
         - name: vocabulary_name_overwrite
           parameters:
             value:
-              type: text
+              type: text        
         - name: mapbox_access_token
           parameters:
             value:

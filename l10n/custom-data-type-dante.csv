@@ -128,5 +128,5 @@ custom.data.type.dante.modal.form.popup.jskospreview.hasDenomination,Konfession,
 custom.data.type.dante.modal.form.popup.jskospreview.hasPoliticalParty,Politische Zugehörigkeit,Political Party
 custom.data.type.dante.modal.form.popup.jskospreview.nationality,Staatsangehörigkeit,Nationality
 custom.data.type.dante.modal.form.popup.jskospreview.type,Typ,Type
-
+custom.data.type.dante.config.parameter.mask.ancestors.value.label,Elternknoten-Einschränkung (URI),Ancestor-node-restriction (URI)
 
