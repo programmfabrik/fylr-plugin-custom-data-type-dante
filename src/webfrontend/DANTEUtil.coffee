@@ -54,7 +54,7 @@ class DANTEUtil
 
   @getDetailAboutRecordViaAPI: (that, uri, cache, opts, cdata, layout, anchorForLabelChoosePopup) ->
     # get full record to get correct preflabel in desired language
-    detailAPIPath = location.protocol + '//api.dante.gbv.de/data?uri=' + uri + cache + '&properties=+hiddenLabel,notation,scopeNote,definition,identifier,example,location,startDate,endDate,startPlace,endPlace,ancestors'
+    detailAPIPath = 'https://api.dante.gbv.de/data?uri=' + uri + cache + '&properties=+hiddenLabel,notation,scopeNote,definition,identifier,example,location,startDate,endDate,startPlace,endPlace,ancestors'
     # start suggest-XHR
     dataEntry_xhr = new (CUI.XHR)(url: detailAPIPath)
     dataEntry_xhr.start().done((data_detail, status, statusText) ->
