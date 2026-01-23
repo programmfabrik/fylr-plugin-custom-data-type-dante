@@ -340,7 +340,7 @@ class DANTE_ListViewTreeNode extends CUI.ListViewTreeNode
         if that._context.resettedPopup
           cache = '0'
 
-        url = 'https:////api.dante.gbv.de/narrower?format=json&uri=' + @_uri + '&limit=100&cache=' + cache + '&voc=' + @_vocParameter
+        url = 'https://api.dante.gbv.de/narrower?format=json&uri=' + @_uri + '&limit=100&cache=' + cache + '&voc=' + @_vocParameter
         getChildren_xhr ={ "xhr" : undefined }
         getChildren_xhr.xhr = new (CUI.XHR)(url: url)
         getChildren_xhr.xhr.start().done((data, status, statusText) ->
