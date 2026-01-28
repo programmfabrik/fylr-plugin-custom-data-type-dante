@@ -19,6 +19,16 @@ The ZIP can be downloaded and installed using the plugin manager, or used direct
 
 Github has an overview page to get a list of [all releases](https://github.com/programmfabrik/fylr-plugin-custom-data-type-dante/releases/).
 
+Check in your fylr.yml that you do not have a conflicting plugin enabled: remove the line with easydb-custom-data-type-dante. 
+In the file fylr.yml in yaml hierarchy:
+```
+fylr+: 
+   plugin: 
+      paths: 
+        - "/fylr/files/plugins/easydb/easydb-custom-data-type-dante" 
+```
+... just remove this one line and restart fylr.
+
 ## requirements
 This plugin requires https://github.com/programmfabrik/fylr-plugin-commons-library. In order to use this Plugin, you need to add the [commons-library-plugin](https://github.com/programmfabrik/fylr-plugin-commons-library) to your pluginmanager.
 
