@@ -1,9 +1,12 @@
+# dante-api-endpoint
+danteAPIPath = 'https://api.dante.gbv.de/'
+
 # get all the dante-vocs, needed later for labeldisplay
 DANTEVocs = []
 DANTEVocsNotationTranslations = [];
 if DANTEVocs.length == 0
   getVocs_xhr = { "xhr" : undefined }
-  getVocs_xhr.xhr = new (CUI.XHR)(url: 'https://api.dante.gbv.de/voc&cache=1&limit=1000')
+  getVocs_xhr.xhr = new (CUI.XHR)(url: danteAPIPath + 'voc&cache=1&limit=1000')
   getVocs_xhr.xhr.start().done((data, status, statusText) ->
     DANTEVocs = data
     for key, voc of DANTEVocs
@@ -203,7 +206,7 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
                         #############################################
                         # send jskos to dante and parse result
                         dante_ingest_xhr = new CUI.XHR
-                                                  url: "https://api.dante.gbv.de/ingest"
+                                                  url: danteAPIPath + "ingest"
                                                   timeout: 10000
                                                   method: 'POST'
                                                   body: newIngestString
@@ -675,7 +678,7 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
           vocParameter = that.getVocabularyNameFromDatamodel(opts)
 
         # start request
-        searchsuggest_xhr.xhr = new (CUI.XHR)(url: 'https://api.dante.gbv.de/suggest?search=' + dante_searchstring + '&voc=' + vocParameter + '&language=' + that.getFrontendLanguage() + '&limit=' + dante_countSuggestions + cache + ancestors)
+        searchsuggest_xhr.xhr = new (CUI.XHR)(url: danteAPIPath + 'suggest?search=' + dante_searchstring + '&voc=' + vocParameter + '&language=' + that.getFrontendLanguage() + '&limit=' + dante_countSuggestions + cache + ancestors)
         searchsuggest_xhr.xhr.start().done((data_1, status, statusText) ->
 
             extendedInfo_xhr = { "xhr" : undefined }
@@ -945,7 +948,7 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
                   voc = @getVocabularyNameFromDatamodel(opts)
 
                 # start new request
-                searchsuggest_xhr = new (CUI.XHR)(url: 'https://api.dante.gbv.de/suggest?search=&voc=' + voc + '&language=' + @getFrontendLanguage() + '&limit=1000' + cache + ancestors)
+                searchsuggest_xhr = new (CUI.XHR)(url: danteAPIPath + 'suggest?search=&voc=' + voc + '&language=' + @getFrontendLanguage() + '&limit=1000' + cache + ancestors)
                 searchsuggest_xhr.start().done((data, status, statusText) ->
                     # read options for select
                     select_items = []
@@ -1027,7 +1030,7 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
 
                     if cdata?.conceptURI && cdata?.conceptURI != null
                       # download data from dante for fulltext
-                      fulltext_xhr = new (CUI.XHR)(url: 'https://api.dante.gbv.de/data?uri=' + encodeURIComponent(cdata.conceptURI) + '&cache=1&properties=+ancestors,hiddenLabel,notation,scopeNote,definition,note,identifier,example,location,depiction,startDate,endDate,startPlace,endPlace')
+                      fulltext_xhr = new (CUI.XHR)(url: danteAPIPath + 'data?uri=' + encodeURIComponent(cdata.conceptURI) + '&cache=1&properties=+ancestors,hiddenLabel,notation,scopeNote,definition,note,identifier,example,location,depiction,startDate,endDate,startPlace,endPlace')
                       fulltext_xhr.start().done((detail_data, status, statusText) ->
                           cdata._fulltext = DANTEUtil.getFullTextFromJSKOSObject detail_data, that.getDatabaseLanguages()
                           cdata._standard= DANTEUtil.getStandardFromJSKOSObject detail_data, that.getDatabaseLanguages(), false
@@ -1116,7 +1119,7 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
     if that.getCustomMaskSettings()?.mapbox_access_token?.value
       mapbox_access_token = that.getCustomMaskSettings().mapbox_access_token.value
     # start new request to DANTE-API
-    extendedInfo_xhr.xhr = new (CUI.XHR)(url: 'https://api.dante.gbv.de/data?uri=' + uri + '&format=json&properties=+ancestors,hiddenLabel,notation,scopeNote,definition,note,identifier,example,location,depiction,startDate,endDate,startPlace,endPlace,qualifiedRelations&cache=1')
+    extendedInfo_xhr.xhr = new (CUI.XHR)(url: danteAPIPath + 'data?uri=' + uri + '&format=json&properties=+ancestors,broader,hiddenLabel,notation,scopeNote,definition,note,identifier,example,location,depiction,startDate,endDate,startPlace,endPlace,qualifiedRelations&cache=1')
     extendedInfo_xhr.xhr.start()
     .done((data, status, statusText) ->
       htmlContent = that.getJSKOSPreview(data, mapbox_access_token)
@@ -1240,7 +1243,7 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
           queryProperties += ',ancestors'
 
         # start request
-        search_xhr.xhr = new (CUI.XHR)(url: 'https://api.dante.gbv.de/search?query=' + dante_searchstring + '&properties=' + queryProperties + '&voc=' + vocParameter + '&language=' + that.getFrontendLanguage() + '&limit=' + dante_countSuggestions + cache + '&offset=' + offset + ancestors)
+        search_xhr.xhr = new (CUI.XHR)(url: danteAPIPath + 'search?query=' + dante_searchstring + '&properties=' + queryProperties + '&voc=' + vocParameter + '&language=' + that.getFrontendLanguage() + '&limit=' + dante_countSuggestions + cache + '&offset=' + offset + ancestors)
         search_xhr.xhr.start().done((data, status, statusText) ->
         
             resultPane.removeClass('dante-popover-results-paginator-loading')
@@ -1616,7 +1619,7 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
             if that.getVocabularyNameFromDatamodel(opts) == '*'
               notationStr = '';
             # start new request
-            searchsuggest_xhr = new (CUI.XHR)(url: 'https://api.dante.gbv.de/voc?cache=1' + notationStr)
+            searchsuggest_xhr = new (CUI.XHR)(url: danteAPIPath + 'voc?cache=1' + notationStr)
             searchsuggest_xhr.start().done((data, status, statusText) ->
                 # read options for select
                 select_items = []

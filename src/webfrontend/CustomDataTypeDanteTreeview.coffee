@@ -58,13 +58,13 @@ class DANTE_ListViewTree
           cache = 1   
 
         # default url = /voc/top
-        url = 'https://api.dante.gbv.de/voc/' + vocName + '/top?format=json&properties=+notation&limit=100&cache=' + cache
+        url = danteAPIPath + 'voc/' + vocName + '/top?format=json&properties=+notation&limit=100&cache=' + cache
 
         # ancestors-parameter given? -> use it as uri for narrower-request
         ancestorURI = false
         if that.context.getCustomMaskSettings().ancestors?.value
             ancestorURI = that.context.getCustomMaskSettings().ancestors?.value     
-            url = 'https://api.dante.gbv.de/narrower/?uri=' + ancestorURI + '&format=json&properties=+notation&limit=100&cache=' + cache        
+            url = danteAPIPath + 'narrower/?uri=' + ancestorURI + '&format=json&properties=+notation&limit=100&cache=' + cache        
 
         # start new request to DANTE-API
         topTree_xhr.xhr = new (CUI.XHR)(url: url)
@@ -124,7 +124,7 @@ class DANTE_ListViewTree
             ancestors = '&ancestors=' + that.context.getCustomMaskSettings().ancestors?.value     
 
         # start new request to DANTE-API
-        url = 'https://api.dante.gbv.de/search?voc=' + vocName + '&query=' + searchTerm + '&format=json&limit=100&cache=' + cache + ancestors + '&properties=+ancestors,notation&offset=0'
+        url = danteAPIPath + 'search?voc=' + vocName + '&query=' + searchTerm + '&format=json&limit=100&cache=' + cache + ancestors + '&properties=+ancestors,notation&offset=0'
         searchTree_xhr.xhr = new (CUI.XHR)(url: url)
         searchTree_xhr.xhr.start().done((data, status, statusText) ->
 
@@ -340,7 +340,7 @@ class DANTE_ListViewTreeNode extends CUI.ListViewTreeNode
         if that._context.resettedPopup
           cache = '0'
 
-        url = 'https://api.dante.gbv.de/narrower?format=json&uri=' + @_uri + '&limit=100&cache=' + cache + '&voc=' + @_vocParameter
+        url = danteAPIPath + 'narrower?format=json&uri=' + @_uri + '&limit=100&cache=' + cache + '&voc=' + @_vocParameter
         getChildren_xhr ={ "xhr" : undefined }
         getChildren_xhr.xhr = new (CUI.XHR)(url: url)
         getChildren_xhr.xhr.start().done((data, status, statusText) ->
@@ -412,7 +412,7 @@ class DANTE_ListViewTreeNode extends CUI.ListViewTreeNode
                               if that._context.resettedPopup
                                   cache = '&cache=1'
 
-                              allDataAPIPath = 'https:////api.dante.gbv.de/data?uri=' + that._uri + cache + '&properties=+hiddenLabel,notation,scopeNote,definition,note,identifier,example,location,depiction,startDate,endDate,startPlace,endPlace,ancestors'
+                              allDataAPIPath = danteAPIPath + 'data?uri=' + that._uri + cache + '&properties=+hiddenLabel,notation,scopeNote,definition,note,identifier,example,location,depiction,startDate,endDate,startPlace,endPlace,ancestors'
 
                               # start XHR
                               dataEntry_xhr = new (CUI.XHR)(url: allDataAPIPath)

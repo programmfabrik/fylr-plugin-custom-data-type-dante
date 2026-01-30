@@ -1,3 +1,5 @@
+# dante-api-endpoint
+danteAPIPath = 'https://api.dante.gbv.de/'
 
 # build _standard and _fulltext, facetTerm according to
 #   https://docs.easydb.de/en/technical/plugins/customdatatype/#general-keys
@@ -54,7 +56,7 @@ class DANTEUtil
 
   @getDetailAboutRecordViaAPI: (that, uri, cache, opts, cdata, layout, anchorForLabelChoosePopup) ->
     # get full record to get correct preflabel in desired language
-    detailAPIPath = 'https://api.dante.gbv.de/data?uri=' + uri + cache + '&properties=+hiddenLabel,notation,scopeNote,definition,identifier,example,location,startDate,endDate,startPlace,endPlace,ancestors'
+    detailAPIPath = danteAPIPath + 'data?uri=' + uri + cache + '&properties=+hiddenLabel,notation,scopeNote,definition,identifier,example,location,startDate,endDate,startPlace,endPlace,ancestors'
     # start suggest-XHR
     dataEntry_xhr = new (CUI.XHR)(url: detailAPIPath)
     dataEntry_xhr.start().done((data_detail, status, statusText) ->

@@ -4,6 +4,7 @@ CustomDataTypeDANTE.prototype.getJSKOSPreview = (data, mapbox_access_token = fal
   html = ''
   ancestors = ''
   spaces = ''
+  broader = ''
   namewithpath = ''
 
   # wenn deutsches prefLabel
@@ -20,22 +21,35 @@ CustomDataTypeDANTE.prototype.getJSKOSPreview = (data, mapbox_access_token = fal
 
   html += '<h3><span class="cui-label-icon"><i class="fa  fa-info-circle"></i></span>&nbsp;' + prefLabel + '</h3>'
 
-  # build ancestors-hierarchie
-  if data.ancestors
-    data.ancestors = data.ancestors.reverse()
-    for key, val of data.ancestors
+  # if polyhierarchie (multiple broaders), only show broaders, not ancestors
+  if data.broader.length > 1
+    for key, val of data.broader
       if val != null
         tmpPrefLabel = that.getPrefLabelFromJSKOS(val)
-        spaces = ''
-        i = 0
-        while i < key
-          spaces += '&nbsp;&nbsp;'
-          i++
         namewithpath += tmpPrefLabel + ' > '
-        ancestors += spaces + '<span class="danteTooltipAncestors"><span class="cui-label-icon"><i class="fa fa-sitemap" aria-hidden="true"></i></span> ' + tmpPrefLabel + '</span><br />'
-  if ancestors != ''
-    html += ancestors + spaces + '<span class="danteTooltipAncestors">&nbsp;&nbsp;<span class="cui-label-icon"><i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span> ' + prefLabel + '</span><br />'
-    namewithpath += prefLabel
+        broader += '<span class="danteTooltipAncestors"><span class="cui-label-icon"><i class="fa fa-sitemap" aria-hidden="true"></i></span> ' + tmpPrefLabel + '</span><br />'
+    if broader != ''
+      html += broader
+      namewithpath += prefLabel
+
+  # build ancestors-hierarchie (if one broader)
+  if data.broader.length == 1
+    if data.ancestors
+      data.ancestors = data.ancestors.reverse()
+      for key, val of data.ancestors
+        if val != null
+          tmpPrefLabel = that.getPrefLabelFromJSKOS(val)
+          spaces = ''
+          i = 0
+          while i < key
+            spaces += '&nbsp;&nbsp;'
+            i++
+          namewithpath += tmpPrefLabel + ' > '
+          ancestors += spaces + '<span class="danteTooltipAncestors"><span class="cui-label-icon"><i class="fa fa-sitemap" aria-hidden="true"></i></span> ' + tmpPrefLabel + '</span><br />'
+
+    if ancestors != ''
+      html += ancestors + spaces + '<span class="danteTooltipAncestors">&nbsp;&nbsp;<span class="cui-label-icon"><i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></span> ' + prefLabel + '</span><br />'
+      namewithpath += prefLabel
 
   if namewithpath == ''
     namewithpath = prefLabel

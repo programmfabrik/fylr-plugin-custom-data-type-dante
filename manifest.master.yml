@@ -129,7 +129,6 @@ base_config:
         type: bool
         default: false
         position: 0
-
   - name: update_dante
     group: update_custom_data_type
     parameters:
