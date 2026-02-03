@@ -152,6 +152,12 @@ base_config:
         type: text
         default: 'de'
         position: 3
+  - name: mapbox_dante
+    group: mapbox_update_custom_data_type
+    parameters:
+      mapbox_access_token:
+        type: text
+        position: 0        
 
 system_rights:
   - name: dante_plugin

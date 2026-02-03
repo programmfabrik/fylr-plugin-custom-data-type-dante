@@ -1116,8 +1116,8 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
     if extendedInfo_xhr.xhr != undefined
       extendedInfo_xhr.xhr.abort()
 
-    if that.getCustomMaskSettings()?.mapbox_access_token?.value
-      mapbox_access_token = that.getCustomMaskSettings().mapbox_access_token.value
+    mapbox_access_token = that.getMapboxAccessKey()
+
     # start new request to DANTE-API
     extendedInfo_xhr.xhr = new (CUI.XHR)(url: danteAPIPath + 'data?uri=' + uri + '&format=json&properties=+ancestors,broader,hiddenLabel,notation,scopeNote,definition,note,identifier,example,location,depiction,startDate,endDate,startPlace,endPlace,qualifiedRelations&cache=1')
     extendedInfo_xhr.xhr.start()
@@ -1746,5 +1746,16 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
       tags.push $$("custom.data.type.commons.controls.addnew.label") + ' ✗'
     tags
 
+  getMapboxAccessKey: () ->
+    mapbox_access_token = @.getCustomMaskSettings()?.mapbox_access_token?.value
+    if mapbox_access_token
+      return mapbox_access_token
+    
+    baseConfig = ez5.session.getBaseConfig("plugin", "custom-data-type-dante")
+    mapbox_access_token = baseConfig?.mapbox_dante?.mapbox_access_token
+    if mapbox_access_token
+      return mapbox_access_token
+    
+    return null
 
 CustomDataType.register(CustomDataTypeDANTE)
