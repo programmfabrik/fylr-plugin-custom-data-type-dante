@@ -894,9 +894,10 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
     if editorStyle == 'dropdown'
         @__renderEditorInputInline(data, cdata, opts)
     else
-        # add "add-new"-button to menu?
-        if that.getIngestPermissionStatus() == true
-          customButtonBarEntrys = [that.getCustomButtonBarEntryForNewRecordAddition(that, data, cdata, opts)]
+        # add "add-new"-button to menu? (only in editor and editor-bulk)
+        if opts?.mode == 'editor' || opts?.mode == 'editor-bulk'
+          if that.getIngestPermissionStatus() == true
+            customButtonBarEntrys = [that.getCustomButtonBarEntryForNewRecordAddition(that, data, cdata, opts)]
         @__renderEditorInputPopover(data, cdata, opts, customButtonBarEntrys)
 
 
