@@ -68,7 +68,7 @@ CustomDataTypeDANTE.prototype.getJSKOSPreview = (data, mapbox_access_token = fal
   if data.altLabel
     for key, val of data.altLabel
       for key2, val2 of val
-        altLabels = ' - ' + val2 + '<br />' + altLabels
+        altLabels = ' - ' + val2 + ' (' + key + ')<br />' + altLabels
   if altLabels
     html += '<h4>' + $$('custom.data.type.dante.modal.form.popup.jskospreview.altterms') + '</h4>' + altLabels
 
