@@ -57,7 +57,6 @@ custom.data.type.dante.modal.form.popup.jskospreview.example,Beispiel,Example
 custom.data.type.dante.modal.form.popup.jskospreview.depiction,Bilder,Depiction
 custom.data.type.dante.modal.form.popup.jskospreview.endDate,Daseinsende,End of existence
 custom.data.type.dante.modal.form.popup.jskospreview.startDate,Daseinsbeginn,Beginning of existence
-custom.data.type.dante.config.parameter.mask.mapbox_access_token.value.label,Mapbox-Access-Token (Kartenanzeige),Mapbox-Access-Token (display maps)
 custom.data.type.dante.modal.form.dropdown.loadingentries,Einträge werden geladen ..,loading entries ..
 custom.data.type.dante.modal.form.dropdown.choose,auswählen ..,choose ..
 custom.data.type.dante.modal.form.dropdown.selectvocabularyLabel,Vokabular,Vocabulary
