@@ -149,6 +149,11 @@ base_config:
         type: text
         default: 'de'
         position: 3
+      custom_expires_days:
+        type: int
+        min: 1
+        default: 1
+        position: 4
   - name: mapbox_dante
     group: mapbox_update_custom_data_type
     parameters:

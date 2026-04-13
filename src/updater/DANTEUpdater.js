@@ -31,25 +31,25 @@ function hasChanges(objectOne, objectTwo) {
 }
 
 function getConfigFromAPI() {
-        return new Promise((resolve, reject) => {
-                var url = 'http://fylr.localhost:8081/api/v1/config?access_token=' + access_token
-                fetch(url, {
-                                headers: {
-                                        'Accept': 'application/json'
-                                },
-                        })
-                        .then(response => {
-                                if (response.ok) {
-                                        resolve(response.json());
-                                } else {
-                                        console.error("DANTE-Updater: Fehler bei der Anfrage an /config ");
-                                }
-                        })
-                        .catch(error => {
-                                console.error(error);
-                                console.error("DANTE-Updater: Fehler bei der Anfrage an /config");
-                        });
-        });
+    return new Promise((resolve, reject) => {
+        var url = 'http://fylr.localhost:8081/api/v1/config?access_token=' + access_token
+        fetch(url, {
+            headers: {
+                'Accept': 'application/json'
+            },
+        })
+            .then(response => {
+                if (response.ok) {
+                    resolve(response.json());
+                } else {
+                    console.error("DANTE-Updater: Fehler bei der Anfrage an /config ");
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                console.error("DANTE-Updater: Fehler bei der Anfrage an /config");
+            });
+    });
 }
 
 function isInTimeRange(currentHour, fromHour, toHour) {
@@ -62,7 +62,16 @@ function isInTimeRange(currentHour, fromHour, toHour) {
     } else { // through the night
         return currentHour >= fromHour || currentHour < toHour;
     }
-} 
+}
+
+function getNewCustomExpiresAt() {
+    const newExpiresAt = new Date()
+    const customExpirationConfig = info?.config?.plugin?.['custom-data-type-dante']?.config?.update_dante?.custom_expires_days || 1
+
+    newExpiresAt.setDate(newExpiresAt.getDate() + customExpirationConfig);
+
+    return newExpiresAt.toISOString()
+}
 
 main = (payload) => {
     switch (payload.action) {
@@ -102,7 +111,7 @@ main = (payload) => {
                 requestUrls.push(dataRequest);
             });
 
-            Promise.all(requestUrls).then(function(responses) {
+            Promise.all(requestUrls).then(function (responses) {
                 let results = [];
                 // Get a JSON object from each of the responses
                 responses.forEach((response, index) => {
@@ -122,7 +131,7 @@ main = (payload) => {
                     results.push(result);
                 });
                 return Promise.all(results.map(result => result.data));
-            }).then(function(data) {
+            }).then(function (data) {
                 let updatedObjects = 0;
                 let results = [];
                 data.forEach((data, index) => {
@@ -180,7 +189,7 @@ main = (payload) => {
                                 } else {
                                     newCdata.conceptNameWithHierarchie = true;
                                 }
-                                
+
                                 // save conceptName
                                 if (!originalCdata.conceptNameChosenByHand) {
                                     newCdata.conceptName = DANTEUtil.getConceptNameFromJSKOSObject(resultJSON, desiredLanguage, newCdata.conceptNameWithHierarchie);
@@ -214,7 +223,11 @@ main = (payload) => {
                                 if (hasChanges(payload.objects[index].data, newCdata)) {
                                     payload.objects[index].data = newCdata;
                                     updatedObjects++;
-                                } else {}
+                                } else { 
+                                    payload.objects[index].data = originalCdata
+                                }
+                                // set expires at for the custom data object according to the plugin base config
+                                payload.objects[index].data._expires_at = getNewCustomExpiresAt()
                             }
                             else {
                                 console.error("Empty JSKOS at " + uri + "?")
@@ -268,8 +281,8 @@ outputErr = (err2) => {
     process.exit(0);
 }
 
-logDebug = (message) =>{
-    if(!debug) return;
+logDebug = (message) => {
+    if (!debug) return;
 
     console.error("custom-data-type-dante: " + message)
 }
@@ -286,17 +299,17 @@ logDebug = (message) =>{
     logDebug("===================================================");
     logDebug("Debug: enabled");
     logDebug("===================================================");
-    if(info?.config?.plugin?.['custom-data-type-dante']?.config?.update_dante?.restrict_time === true) {
+    if (info?.config?.plugin?.['custom-data-type-dante']?.config?.update_dante?.restrict_time === true) {
         dante_config = info.config.plugin['custom-data-type-dante'].config.update_dante;
 
-        
+
         // check if hours are configured
-        if(dante_config?.from_time !== false && dante_config?.to_time !== false) {
-            const now = new Date();            
+        if (dante_config?.from_time !== false && dante_config?.to_time !== false) {
+            const now = new Date();
             const hour = now.getHours();
 
             // check if hours do not match
-            if (isInTimeRange(hour, dante_config.from_time, dante_config.to_time)){
+            if (isInTimeRange(hour, dante_config.from_time, dante_config.to_time)) {
                 logDebug("hours do match, start update")
             } else {
                 // exit if hours do not match
@@ -312,8 +325,8 @@ logDebug = (message) =>{
     }
 
     access_token = info && info.plugin_user_access_token;
-    
-    if(access_token) {
+
+    if (access_token) {
 
         ////////////////////////////////////////////////////////////////////////////
         // get config and read the languages
