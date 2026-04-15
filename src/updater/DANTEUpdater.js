@@ -32,7 +32,7 @@ function hasChanges(objectOne, objectTwo) {
 
 function getConfigFromAPI() {
     return new Promise((resolve, reject) => {
-        var url = 'http://fylr.localhost:8081/api/v1/config?access_token=' + access_token
+        var url = info.api_url + '/api/v1/config?access_token=' + access_token
         fetch(url, {
             headers: {
                 'Accept': 'application/json'
