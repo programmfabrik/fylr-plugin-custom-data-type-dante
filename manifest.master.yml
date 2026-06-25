@@ -24,14 +24,19 @@ custom_types:
         type: text
       conceptURI:
         type: text
+        skipTerms: true
       conceptAncestors:
         type: text
+        skipTerms: true
       conceptSource:
         type: text
+        skipTerms: true
       conceptGeoJSON:
         type: geo_json
+        skipTerms: true
       facetTerm:
         type: text_l10n
+        skipTerms: true
     update:
       plugin_user:
         reference: system:root
