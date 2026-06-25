@@ -57,7 +57,6 @@ custom.data.type.dante.modal.form.popup.jskospreview.example,Beispiel,Example
 custom.data.type.dante.modal.form.popup.jskospreview.depiction,Bilder,Depiction
 custom.data.type.dante.modal.form.popup.jskospreview.endDate,Daseinsende,End of existence
 custom.data.type.dante.modal.form.popup.jskospreview.startDate,Daseinsbeginn,Beginning of existence
-custom.data.type.dante.config.parameter.mask.mapbox_access_token.value.label,Mapbox-Access-Token (Kartenanzeige),Mapbox-Access-Token (display maps)
 custom.data.type.dante.modal.form.dropdown.loadingentries,Einträge werden geladen ..,loading entries ..
 custom.data.type.dante.modal.form.dropdown.choose,auswählen ..,choose ..
 custom.data.type.dante.modal.form.dropdown.selectvocabularyLabel,Vokabular,Vocabulary
@@ -81,6 +80,7 @@ server.config.parameter.system.update_dante.restrict_time.checkbox,Ja - beschrä
 server.config.parameter.system.update_dante.from_time.label,Stunde von (Zahl 0-24),Hour from (Int 0-24)
 server.config.parameter.system.update_dante.to_time.label,Stunde bis (Zahl 0-24),Hour to (Int 0-24)
 server.config.parameter.system.update_dante.default_language.label,Standard-Datensprache als Fallback für Update (ISO 639-1),Default-data-language (as fallback) for update (ISO 639-1)
+server.config.parameter.system.update_dante.custom_expires_days.label,Datengültigkeit (in Tagen),Data expires in (in days)
 custom.data.type.dante.config.parameter.schema.insert_allowed.value.label,Neu anlegen?,Add new?
 custom.data.type.dante.config.parameter.schema.insert_allowed.value.checkbox, Die Neuanlage von Datensätzen über das DANTE-Plugin erlauben (nicht im Dropdown-Modus möglich),Allow adding records via the DANTE plugin (not possible in dropdown-mode)
 custom.data.type.dante.config.parameter.schema.insert_username.value.label,Nutzername für das Neuanlegen (DANTE-Vokabular-Konfiguration),Username for adding (from DANTE vocabulary configuration)

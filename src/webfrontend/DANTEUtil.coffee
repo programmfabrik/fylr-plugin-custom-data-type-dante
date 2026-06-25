@@ -266,7 +266,6 @@ class DANTEUtil
       'hiddenLabel'
       'identifier'
       'notation'
-      'uri'
       'scopeNote'
       'definition'
       'startDate'

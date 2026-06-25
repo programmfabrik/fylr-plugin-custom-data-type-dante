@@ -1747,11 +1747,7 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
       tags.push $$("custom.data.type.commons.controls.addnew.label") + ' ✗'
     tags
 
-  getMapboxAccessKey: () ->
-    mapbox_access_token = @.getCustomMaskSettings()?.mapbox_access_token?.value
-    if mapbox_access_token
-      return mapbox_access_token
-    
+  getMapboxAccessKey: () ->    
     baseConfig = ez5.session.getBaseConfig("plugin", "custom-data-type-dante")
     mapbox_access_token = baseConfig?.mapbox_dante?.mapbox_access_token
     if mapbox_access_token
