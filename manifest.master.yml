@@ -6,15 +6,27 @@ plugin:
     de-DE: DANTE-Verknüpfung
     en-US: DANTE-Referencing
   info:
-    de-DE: Stellt Verknüpfungen mit dem Normdatenserver DANTE her.
-    en-US: Use for references to entities of DANTE-AuthorityFile-Server.
+    de-DE: |
+      Stellt einen eigenen Feldtyp bereit, mit dem Datensätze mit Konzepten aus Vokabularen des [DANTE-Terminologieservers](https://dante.gbv.de) verknüpft werden. Legen Sie pro Feld ein oder mehrere Vokabulare fest, sodass Redakteure den passenden Begriff suchen und auswählen, statt ihn frei einzugeben.
+
+      - Auswahl, aus welchem DANTE-Vokabular bzw. welchen Vokabularen ein Feld schöpft; im Popup-Modus kombinierbar
+      - Editor-Darstellung: Dropdown, Popup oder Popup mit Baumansicht
+      - Optionales Anlegen neuer Einträge in einem Zielvokabular
+      - Hierarchische Beschriftungen und zwischengespeicherte Abfragen
+    en-US: |
+      Adds a custom data type for linking records to concepts from vocabularies hosted on the [DANTE terminology server](https://dante.gbv.de). Choose one or more vocabularies per field so editors can search and select the right term instead of typing it as free text.
+
+      - Pick which DANTE vocabulary or vocabularies a field draws from; several can be combined in popup mode
+      - Editor styles: dropdown, popup, or popup with tree view
+      - Optionally let editors add new records to a target vocabulary
+      - Hierarchical labels and cached lookups
   l10n: l10n/customDataTypeDante.csv
   webfrontend:
     url: customDataTypeDante.js
     css: customDataTypeDante.css
     dependencies:
       - commons-library
-      
+
 base_url_prefix: "webfrontend"
 
 custom_types:
@@ -121,7 +133,7 @@ custom_types:
         - name: vocabulary_name_overwrite
           parameters:
             value:
-              type: text        
+              type: text
 
 base_config:
   - name: debug_dante
@@ -164,7 +176,7 @@ base_config:
     parameters:
       mapbox_access_token:
         type: text
-        position: 0        
+        position: 0
 
 system_rights:
   - name: dante_plugin
