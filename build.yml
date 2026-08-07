@@ -1,0 +1,30 @@
+# Build configuration for fylr-build-plugin — the explicit build description.
+# Delivered files are listed here; "check" (runs with every build) warns when
+# a manifest reference is missing from the build folder.
+# All features: https://github.com/programmfabrik/fylr-build-plugin
+#
+# customDataTypeDante.zip is the name this plugin has always published. fylr updates a
+# url plugin by re-fetching the url it stored at install time, so that name is
+# kept as an alias beside the repository-named asset — without it every
+# existing installation would stop updating, silently.
+
+server:
+  install:
+  - l10n/customDataTypeDante.csv
+webfrontend:
+  coffee1:
+  - webfrontend/CustomDataTypeDante.coffee
+  - webfrontend/CustomDataTypeDanteFacet.coffee
+  - webfrontend/CustomDataTypeDanteParseJSKOS.coffee
+  - webfrontend/CustomDataTypeDanteTreeview.coffee
+  - webfrontend/DANTEUtil.coffee
+  install:
+  - webfrontend/customDataTypeDante.css
+build:
+  bundles:
+  - out: updater/DANTEUpdater.js
+    sources:
+    - src/updater/DANTEUpdater.js
+    - webfrontend/DANTEUtil.coffee
+  zip_aliases:
+  - customDataTypeDante.zip
