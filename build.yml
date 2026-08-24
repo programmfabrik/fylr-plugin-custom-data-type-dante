@@ -11,20 +11,25 @@
 server:
   install:
   - l10n/customDataTypeDante.csv
+  # assembled server-side files, sources in the order written
+  bundles:
+    - out: updater/DANTEUpdater.js
+      sources:
+      - src/updater/DANTEUpdater.js
+      - webfrontend/DANTEUtil.coffee
 webfrontend:
-  coffee1:
-  - webfrontend/CustomDataTypeDante.coffee
-  - webfrontend/CustomDataTypeDanteFacet.coffee
-  - webfrontend/CustomDataTypeDanteParseJSKOS.coffee
-  - webfrontend/CustomDataTypeDanteTreeview.coffee
-  - webfrontend/DANTEUtil.coffee
+  # assembled into plugin.webfrontend.url, in this order:
+  # .coffee is compiled (CoffeeScript 1.x), .scss compiled,
+  # anything else taken verbatim
+  bundles:
+    - sources:
+        - webfrontend/CustomDataTypeDante.coffee
+        - webfrontend/CustomDataTypeDanteFacet.coffee
+        - webfrontend/CustomDataTypeDanteParseJSKOS.coffee
+        - webfrontend/CustomDataTypeDanteTreeview.coffee
+        - webfrontend/DANTEUtil.coffee
   install:
   - webfrontend/customDataTypeDante.css
-build:
-  bundles:
-  - out: updater/DANTEUpdater.js
-    sources:
-    - src/updater/DANTEUpdater.js
-    - webfrontend/DANTEUtil.coffee
-  zip_aliases:
-  - customDataTypeDante.zip
+
+zip_aliases:
+- customDataTypeDante.zip
