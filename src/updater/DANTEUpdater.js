@@ -1,8 +1,5 @@
 const fs = require('fs')
 const https = require('https')
-const fetch = (...args) => import('node-fetch').then(({
-    default: fetch
-}) => fetch(...args));
 
 let databaseLanguages = [];
 let frontendLanguages = [];
