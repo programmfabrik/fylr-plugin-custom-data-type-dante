@@ -102,9 +102,44 @@ main = (payload) => {
             let requestUrls = [];
             let requests = [];
 
+            ////////////////////////////////////////////////////////////////////////////
+            // Replace URIs?
+            ////////////////////////////////////////////////////////////////////////////
+
+            // check if replacements are configured for the URIs
+            let replacements = false;
+            let replaceURIs = info.config.plugin['custom-data-type-dante']?.config?.update_dante?.replace_dante_uri;
+
+            if (typeof replaceURIs === 'string' && replaceURIs.trim() !== '') {
+                try {
+                    replaceURIs = JSON.parse(replaceURIs);
+                } catch (e) {
+                    console.error('Fehler beim Parsen von replace_dante_uri:', e);
+                    replaceURIs = false;
+                }
+            } else {
+                replaceURIs = false;
+            }            
+            
+            if(replaceURIs?.data_table?.length > 0) {
+                replaceURIs = replaceURIs.data_table;
+                const uriMap = replaceURIs.reduce((acc, item) => {
+                        acc[item.from] = item.to;
+                        return acc;
+                    }, {});
+                replaceURIs = uriMap;
+                if(Object.keys(replaceURIs).length) {
+                    replacements = replaceURIs;
+                }
+            }         
+            
+            console.error("replaceURIs", replaceURIs);
+
             URIList.forEach((uri) => {
                 if (uri) {
-                    let dataRequestUrl = 'https://api.dante.gbv.de/data?cache=1&uri=' + encodeURIComponent(uri) + '&properties=+ancestors,altLabel,hiddenLabel,notation,scopeNote,definition,identifier,example,startDate,endDate,startPlace,endPlace'
+                    // check for replacement
+                    let effectiveURI = (replacements && replacements[uri]) ? replacements[uri] : uri;
+                    let dataRequestUrl = 'https://api.dante.gbv.de/data?cache=1&uri=' + encodeURIComponent(effectiveURI) + '&properties=+ancestors,altLabel,hiddenLabel,notation,scopeNote,definition,identifier,example,startDate,endDate,startPlace,endPlace'
                     let dataRequest = fetch(dataRequestUrl);
                     requests.push({
                         url: dataRequestUrl,

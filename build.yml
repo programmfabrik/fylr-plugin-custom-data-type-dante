@@ -28,6 +28,7 @@ webfrontend:
         - webfrontend/CustomDataTypeDanteParseJSKOS.coffee
         - webfrontend/CustomDataTypeDanteTreeview.coffee
         - webfrontend/DANTEUtil.coffee
+        - webfrontend/replace-dante-uri-form.coffee
   install:
   - webfrontend/customDataTypeDante.css
 

@@ -131,3 +131,6 @@ custom.data.type.dante.modal.form.popup.jskospreview.type,Typ,Type
 custom.data.type.dante.config.parameter.mask.ancestors.value.label,Elternknoten-Einschränkung (URI),Ancestor-node-restriction (URI)
 server.config.name.system.mapbox_dante,Mapbox-Einstellungen,Mapbox-Config
 server.config.parameter.system.mapbox_dante.mapbox_access_token.label,Mapbox-Api-Key (für Kartenanzeige benötigt),Mapbox Api-Key (required for map display)
+server.config.parameter.system.update_dante.replace_dante_uri.label,Während des Updates DANTE-URIs ersetzen?,Replace DANTE-URIs in update?
+replacedanteuriform.data_table.from_dante_uri,Von DANTE-URI,From DANTE-URI
+replacedanteuriform.data_table.to_dante_uri,Zu DANTE-URI,To DANTE-URI
