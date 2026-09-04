@@ -73,6 +73,8 @@ function getNewCustomExpiresAt() {
     return newExpiresAt.toISOString()
 }
 
+let errorInProcess = false;
+
 main = (payload) => {
     switch (payload.action) {
         case "start_update":
@@ -101,94 +103,68 @@ main = (payload) => {
             let requests = [];
 
             URIList.forEach((uri) => {
-                let dataRequestUrl = 'https://api.dante.gbv.de/data?cache=1&uri=' + encodeURIComponent(uri) + '&properties=+ancestors,altLabel,hiddenLabel,notation,scopeNote,definition,identifier,example,startDate,endDate,startPlace,endPlace'
-                let dataRequest = fetch(dataRequestUrl);
-                requests.push({
-                    url: dataRequestUrl,
-                    uri: uri,
-                    request: dataRequest
-                });
-                requestUrls.push(dataRequest);
+                if (uri) {
+                    let dataRequestUrl = 'https://api.dante.gbv.de/data?cache=1&uri=' + encodeURIComponent(uri) + '&properties=+ancestors,altLabel,hiddenLabel,notation,scopeNote,definition,identifier,example,startDate,endDate,startPlace,endPlace'
+                    let dataRequest = fetch(dataRequestUrl);
+                    requests.push({
+                        url: dataRequestUrl,
+                        uri: uri,
+                        request: dataRequest
+                    });
+                    requestUrls.push(dataRequest);
+                }
             });
 
             Promise.all(requestUrls).then(function (responses) {
-                let results = [];
-                // Get a JSON object from each of the responses
-                responses.forEach((response, index) => {
-                    let url = requests[index].url;
-                    let uri = requests[index].uri;
-                    let result = {
-                        url: url,
-                        uri: uri,
-                        data: null,
-                        error: null
-                    };
+                // Konvertiere alle Responses korrekt in JSON-Promises
+                let jsonPromises = responses.map((response, index) => {
                     if (response.ok) {
-                        result.data = response.json();
+                        return response.json();
                     } else {
-                        result.error = "Error fetching data from " + url + ": " + response.status + " " + response.statusText;
+                        return Promise.resolve(null);
                     }
-                    results.push(result);
                 });
-                return Promise.all(results.map(result => result.data));
-            }).then(function (data) {
+                return Promise.all(jsonPromises);
+            }).then(function (dataList) {
                 let updatedObjects = 0;
                 let results = [];
-                data.forEach((data, index) => {
+
+                dataList.forEach((data, index) => {
                     let url = requests[index].url;
                     let uri = requests[index].uri;
-                    let result = {
+                    results.push({
                         url: url,
                         uri: uri,
-                        data: data,
-                        error: null
-                    };
-                    if (data instanceof Error) {
-                        result.error = "Error parsing data from " + url + ": " + data.message;
-                    }
-                    results.push(result);
+                        data: data
+                    });
                 });
 
                 // build cdata from all api-request-results
-                let cdataList = [];
                 payload.objects.forEach((result, index) => {
                     let originalCdata = payload.objects[index].data;
                     let newCdata = {};
                     let originalURI = originalCdata.conceptURI;
 
                     const matchingRecordData = results.find(record => record.uri === originalURI);
+                    
+                    if (matchingRecordData && matchingRecordData.data) {
+                        let resultJSON = matchingRecordData.data;
 
-                    if (matchingRecordData) {
-                        // rematch uri, because maybe uri changed / rewrites ..
-                        let uri = matchingRecordData.uri;
-
-                        ///////////////////////////////////////////////////////
-                        // conceptName, conceptURI, _standard, _fulltext, facet, frontendLanguage
-                        resultJSON = matchingRecordData.data;
                         if (Array.isArray(resultJSON) && resultJSON.length > 0) {
-
                             resultJSON = resultJSON[0];
 
                             // basic check if valid jskos
                             if (resultJSON?.uri && resultJSON?.type) {
-                                // get desired language for conceptName. This is frontendlanguage from original data or fallback
+                                // get desired language for conceptName
                                 let desiredLanguage = defaultLanguage;
                                 if (originalCdata?.frontendLanguage?.length == 2) {
                                     desiredLanguage = originalCdata.frontendLanguage;
-                                }
-                                // if no frontendLanguage exists in originalData: add
-                                else {
+                                } else {
                                     originalCdata.frontendLanguage = defaultLanguage;
                                 }
-                                // save frontend language (same as given or default)
                                 newCdata.frontendLanguage = originalCdata.frontendLanguage;
 
-                                // conceptNameWithHierarchie?
-                                if (!originalCdata.conceptNameWithHierarchie) {
-                                    newCdata.conceptNameWithHierarchie = false;
-                                } else {
-                                    newCdata.conceptNameWithHierarchie = true;
-                                }
+                                newCdata.conceptNameWithHierarchie = !!originalCdata.conceptNameWithHierarchie;
 
                                 // save conceptName
                                 if (!originalCdata.conceptNameChosenByHand) {
@@ -199,61 +175,72 @@ main = (payload) => {
                                     newCdata.conceptNameChosenByHand = true;
                                 }
                                 
-                                // save conceptURI and take fresh URI, because it may have been redirected
                                 newCdata.conceptURI = resultJSON.uri;
-                                // save _fulltext
                                 newCdata._fulltext = DANTEUtil.getFullTextFromJSKOSObject(resultJSON, databaseLanguages);
-                                // save _standard
                                 newCdata._standard = DANTEUtil.getStandardFromJSKOSObject(resultJSON, databaseLanguages, newCdata.conceptNameWithHierarchie);
-                                // save facet
                                 newCdata.facetTerm = DANTEUtil.getFacetTermFromJSKOSObject(resultJSON, databaseLanguages, newCdata.conceptNameWithHierarchie);
 
                                 // ancestors
                                 newCdata.conceptAncestors = '';
                                 let conceptAncestors = [];
-
-                                for (i = 0, len = resultJSON.ancestors.length; i < len; i++) {
-                                    conceptAncestors.push(resultJSON.ancestors[i].uri);
+                                if (Array.isArray(resultJSON.ancestors)) {
+                                    for (let i = 0, len = resultJSON.ancestors.length; i < len; i++) {
+                                        if (resultJSON.ancestors[i]?.uri) {
+                                            conceptAncestors.push(resultJSON.ancestors[i].uri);
+                                        }
+                                    }
                                 }
-                                // add own uri to ancestor-uris
                                 conceptAncestors.push(resultJSON.uri);
-                                // merge ancestors to string
                                 newCdata.conceptAncestors = conceptAncestors.join(' ');
 
                                 if (hasChanges(payload.objects[index].data, newCdata)) {
                                     payload.objects[index].data = newCdata;
                                     updatedObjects++;
                                 } else { 
-                                    payload.objects[index].data = originalCdata
+                                    payload.objects[index].data = originalCdata;
                                 }
-                                // set expires at for the custom data object according to the plugin base config
-                                payload.objects[index].data._expires_at = getNewCustomExpiresAt()
+                                payload.objects[index].data._expires_at = getNewCustomExpiresAt();
+                            } else {
+                                console.error("No valid DANTE-record found: " + originalURI);
+                                outputErr('No valid DANTE-record found: ' + originalURI);
+                                errorInProcess = true;
                             }
-                            else {
-                                console.error("Empty JSKOS at " + uri + "?")
-                            }
+                        } else {
+                            console.error("No valid DANTE-record found: " + originalURI);
+                            outputErr('No valid DANTE-record found: ' + originalURI);
+                            errorInProcess = true;
                         }
                     } else {
-                        console.error('No matching record found');
+                        console.error('No valid DANTE-record found: ' + originalURI);
+                        outputErr('No valid DANTE-record found: ' + originalURI);
+                        errorInProcess = true;
                     }
                 });
-                logDebug(payload.objects.length + " objects in payload");
-                logDebug(updatedObjects + " Objects with changes.");
-                outputData({
-                    "payload": payload.objects,
-                    "log": [payload.objects.length + " objects in payload"]
-                });
-            });
-            // send data back for update
-            break;
-        case "end_update":
-            logDebug("done logging")
-            outputData({
-                "state": {
-                    "theend": 2,
-                    "log": ["done logging"]
+
+                if (!errorInProcess) {
+                    logDebug(payload.objects.length + " objects in payload");
+                    logDebug(updatedObjects + " Objects with changes.");
+                    outputData({
+                        "payload": payload.objects,
+                        "log": [payload.objects.length + " objects in payload"]
+                    });
                 }
+            }).catch(error => {
+                console.error("DANTE-Updater Error:", error);
+                outputErr(error);
             });
+            break;
+
+        case "end_update":
+            if (!errorInProcess) {
+                logDebug("done logging");
+                outputData({
+                    "state": {
+                        "theend": 2,
+                        "log": ["done logging"]
+                    }
+                });
+            }
             break;
         default:
             outputErr("Unsupported action " + payload.action);
@@ -270,7 +257,6 @@ outputData = (data) => {
 }
 
 outputErr = async (err2) => {
-
     errorMessage = err2.toString();
 
     // call slack-notification-plugin (if it exists, fire & forget)
@@ -292,36 +278,27 @@ outputErr = async (err2) => {
 
 logDebug = (message) => {
     if (!debug) return;
-
     console.error("custom-data-type-dante: " + message)
 }
 
 (() => {
-
     let data = ""
-
     process.stdin.setEncoding('utf8');
 
-    ////////////////////////////////////////////////////////////////////////////
-    // check if hour-restriction is set
-    ////////////////////////////////////////////////////////////////////////////
     logDebug("===================================================");
     logDebug("Debug: enabled");
     logDebug("===================================================");
+
     if (info?.config?.plugin?.['custom-data-type-dante']?.config?.update_dante?.restrict_time === true) {
         dante_config = info.config.plugin['custom-data-type-dante'].config.update_dante;
 
-
-        // check if hours are configured
         if (dante_config?.from_time !== false && dante_config?.to_time !== false) {
             const now = new Date();
             const hour = now.getHours();
 
-            // check if hours do not match
             if (isInTimeRange(hour, dante_config.from_time, dante_config.to_time)) {
                 logDebug("hours do match, start update")
             } else {
-                // exit if hours do not match
                 logDebug("hours do not match, cancel update")
                 outputData({
                     "state": {
@@ -338,11 +315,6 @@ logDebug = (message) => {
     access_token = info && info.plugin_user_access_token;
 
     if (access_token) {
-
-        ////////////////////////////////////////////////////////////////////////////
-        // get config and read the languages
-        ////////////////////////////////////////////////////////////////////////////
-
         getConfigFromAPI().then(config => {
             databaseLanguages = config.system.config.languages.database;
             databaseLanguages = databaseLanguages.map((value, key, array) => {
@@ -358,21 +330,15 @@ logDebug = (message) => {
                 }
             }
 
-            ////////////////////////////////////////////////////////////////////////////
-            // availabilityCheck for dante-api
-            ////////////////////////////////////////////////////////////////////////////
             https.get('https://api.dante.gbv.de/concept-types/test?cache=0', res => {
                 let testData = [];
                 res.on('data', chunk => {
                     testData.push(chunk);
                 });
                 res.on('end', () => {
-                    const types = JSON.parse(Buffer.concat(testData).toString());
-                    if (types.length > 0) {
-                        if (types[0].uri) {
-                            ////////////////////////////////////////////////////////////////////////////
-                            // test successfull --> continue with custom-data-type-update
-                            ////////////////////////////////////////////////////////////////////////////
+                    try {
+                        const types = JSON.parse(Buffer.concat(testData).toString());
+                        if (types.length > 0 && types[0].uri) {
                             process.stdin.on('readable', () => {
                                 let chunk;
                                 while ((chunk = process.stdin.read()) !== null) {
@@ -380,9 +346,6 @@ logDebug = (message) => {
                                 }
                             });
                             process.stdin.on('end', () => {
-                                ///////////////////////////////////////
-                                // continue with update-routine
-                                ///////////////////////////////////////
                                 try {
                                     let payload = JSON.parse(data)
                                     main(payload)
@@ -392,20 +355,24 @@ logDebug = (message) => {
                                 }
                             });
                         } else {
-                            console.error('Error while interpreting data from api.dante.gbv.de: ', err.message);
+                            console.error('Error while interpreting data from api.dante.gbv.de');
+                            outputErr('Error while interpreting data from api.dante.gbv.de');
                         }
-                    } else {
-                        console.error('Error while interpreting data from api.dante.gbv.de: ', err.message);
+                    } catch (e) {
+                        console.error('Error parsing JSON from api.dante.gbv.de', e);
+                        outputErr(e);
                     }
                 });
             }).on('error', err => {
                 console.error('Error while receiving data from api.dante.gbv.de: ', err.message);
+                outputErr(err);
             });
         }).catch(error => {
             console.error('Es gab einen Fehler beim Laden der Konfiguration:', error);
+            outputErr(error);
         });
-    }
-    else {
+    } else {
         console.error("kein Accesstoken gefunden");
+        outputErr("kein Accesstoken gefunden");
     }
 })();
