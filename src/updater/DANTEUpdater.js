@@ -9,6 +9,9 @@ let info = {}
 
 let access_token = '';
 
+let plugin_name = 'fylr-plugin';
+let instance_name = 'fylr-instance';
+
 if (process.argv.length >= 3) {
     info = JSON.parse(process.argv[2])
 }
@@ -195,9 +198,9 @@ main = (payload) => {
                                     newCdata.conceptName = originalCdata.conceptName;
                                     newCdata.conceptNameChosenByHand = true;
                                 }
-
-                                // save conceptURI
-                                newCdata.conceptURI = uri;
+                                
+                                // save conceptURI and take fresh URI, because it may have been redirected
+                                newCdata.conceptURI = resultJSON.uri;
                                 // save _fulltext
                                 newCdata._fulltext = DANTEUtil.getFullTextFromJSKOSObject(resultJSON, databaseLanguages);
                                 // save _standard
@@ -266,11 +269,20 @@ outputData = (data) => {
     process.exit(0);
 }
 
-outputErr = (err2) => {
+outputErr = async (err2) => {
+
+    errorMessage = err2.toString();
+
+    // call slack-notification-plugin (if it exists, fire & forget)
+    try {
+        var slackUrl = instance_name.replace(/\/+$/, '') + "/api/v1/plugin/extension/slack-notification/slack_notification?access_token=" + access_token + "&source_instance=" + instance_name + "&source_name=" + plugin_name + "&message=" + encodeURIComponent(errorMessage);
+        await fetch(slackUrl, { signal: AbortSignal.timeout(2000) }).catch(function() {});
+    } catch (e) {}    
+
     let err = {
         "status_code": 400,
         "body": {
-            "error": err2.toString()
+            "error": errorMessage
         }
     }
     console.error(JSON.stringify(err))
@@ -321,6 +333,8 @@ logDebug = (message) => {
         }
     }
 
+    instance_name = info?.external_url || 'fylr-instance';
+    plugin_name = Object.keys(info?.config?.plugin || 'fylr-plugin')[0];
     access_token = info && info.plugin_user_access_token;
 
     if (access_token) {
