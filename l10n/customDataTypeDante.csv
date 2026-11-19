@@ -90,6 +90,11 @@ custom.data.type.commons.controls.addnew.label,Neu anlegen,add new
 custom.data.type.dante.config.parameter.mask.use_dropdown_info_popup.value.label,Infopopup?,Infopopup?
 custom.data.type.dante.config.parameter.mask.use_dropdown_info_popup.value.checkbox,Auch für Dropdown anzeigen,Show for dropdown too
 custom.data.type.dante.config.parameter.mask.vocabulary_name_overwrite.value.label,Vokabularkonfiguration aus Schema überschreiben,Overwrite vocnotation-config from schema
+custom.data.type.dante.config.parameter.mask.insert_allowed.value.label,Neu anlegen?,Add new?
+custom.data.type.dante.config.parameter.mask.insert_allowed.value.checkbox, Die Neuanlage von Datensätzen über das DANTE-Plugin erlauben (nicht im Dropdown-Modus möglich),Allow adding records via the DANTE plugin (not possible in dropdown-mode)
+custom.data.type.dante.config.parameter.mask.insert_username.value.label,Nutzername für das Neuanlegen (DANTE-Vokabular-Konfiguration),Username for adding (from DANTE vocabulary configuration)
+custom.data.type.dante.config.parameter.mask.insert_token.value.label,Token für das Neuanlegen (DANTE-Vokabular-Konfiguration),Token for adding (from DANTE vocabulary configuration)
+custom.data.type.dante.config.parameter.mask.insert_voc_notation.value.label,Zielvokabular für Neuanlagen,Target vocabulary for new records
 custom.data.type.dante.add_new.modal.header_left,Datensatz neu anlegen,Create new record
 custom.data.type.dante.add_new.modal.header_right,Vokabular,Vocabulary
 custom.data.type.dante.add_new.modal.introtext,"Sie können hier neue Datensätze für das oben rechts angezeigte Vokabular anlegen.\n\nDie Redaktion des Vokabulars wird über den neuen Datensatz benachrichtigt und wird diesen ggf. bearbeiten oder verfeinern.\n\nDer neue Datensatz kann nach Anlage direkt hier verwendet werden.","You can create new data records here for the vocabulary displayed at the top right.\n\nThe editors of the vocabulary will be notified of the new data record and will edit or refine it if necessary.\n\nThe new data record can be used directly here after it has been created. "

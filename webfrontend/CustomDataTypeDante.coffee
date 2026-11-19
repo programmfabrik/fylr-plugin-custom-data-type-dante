@@ -108,8 +108,16 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
   getIngestPermissionStatus: ->
     status = false;
     # check settings in schema
-    if @getCustomSchemaSettings()?.insert_allowed?.value == true
-      if @getCustomSchemaSettings()?.insert_username?.value != '' && @getCustomSchemaSettings()?.insert_token?.value != ''&& @getCustomSchemaSettings()?.insert_voc_notation?.value != ''
+    customMaskSettings = @getCustomMaskSettings()
+    customSchemaSettings = @getCustomSchemaSettings()
+    
+    insertAllowed = customMaskSettings?.insert_allowed?.value ? customSchemaSettings?.insert_allowed?.value
+    insertUsername = customMaskSettings?.insert_username?.value ? customSchemaSettings?.insert_username?.value
+    insertToken = customMaskSettings?.insert_token?.value ? customSchemaSettings?.insert_token?.value
+    insertVocNotation = customMaskSettings?.insert_voc_notation?.value ? customSchemaSettings?.insert_voc_notation?.value
+
+    if insertAllowed == true
+      if insertUsername != '' && insertToken != ''&& insertVocNotation != ''
         # check system_right
         if ez5.session.hasSystemRight("plugin.custom-data-type-dante.dante_plugin", "dante_allow_add_records") || ez5.session.hasSystemRight("system.root")
           status = true
@@ -174,11 +182,13 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
                           CUI.alert(text: $$('custom.data.type.commons.controls.addnew.no_preflabel_given'))
                           that.enableIngestButtonAndForm that
                           return
+                        
+                        insertVocNotation = that.getCustomMaskSettings()?.insert_voc_notation?.value ? that.getCustomSchemaSettings()?.insert_voc_notation?.value
 
                         newJSKOSRecord = {}
                         newJSKOSRecord.uri = ''
                         newJSKOSRecord.type = ['http://www.w3.org/2004/02/skos/core#Concept']
-                        newJSKOSRecord.inScheme = [{'uri' : 'http://uri.gbv.de/terminology/' + that.getCustomSchemaSettings().insert_voc_notation.value }]
+                        newJSKOSRecord.inScheme = [{'uri' : 'http://uri.gbv.de/terminology/' + insertVocNotation }]
                         newJSKOSRecord.prefLabel = {'de' : that.form.getFieldsByName('dante_addnew_form_preflabel')[0].getValue()}
                         altLabels = []
                         if that.form.getFieldsByName('dante_addnew_form_altlabel')[0].getValue()
@@ -198,9 +208,12 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
                         if that.form.getFieldsByName('dante_addnew_form_note')[0].getValue()
                           newJSKOSRecord.note = {'de' : [that.form.getFieldsByName('dante_addnew_form_note')[0].getValue()]}
 
+                        insertUsername = that.getCustomMaskSettings()?.insert_username?.value ? that.getCustomSchemaSettings()?.insert_username?.value
+                        insertToken = that.getCustomMaskSettings()?.insert_token?.value ? that.getCustomSchemaSettings()?.insert_token?.value
+                        
                         newJSKOS = [newJSKOSRecord]
                         newJSKOSString = JSON.stringify newJSKOS
-                        ingestObject = [{ 'username' : that.getCustomSchemaSettings().insert_username.value, 'token' : that.getCustomSchemaSettings().insert_token.value, 'data' : JSON.stringify(newJSKOS)}]
+                        ingestObject = [{ 'username' : insertUsername, 'token' : insertToken, 'data' : JSON.stringify(newJSKOS)}]
                         newIngestString = JSON.stringify ingestObject
 
                         #############################################
@@ -274,6 +287,9 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
         onClick: =>
           # hide dots-menu
           that.dotsButtonMenu.hide()
+
+          insertVocNotation = that.getCustomMaskSettings()?.insert_voc_notation?.value ? that.getCustomSchemaSettings()?.insert_voc_notation?.value
+
           # open modal with form for entering of basic record information
           that.modal = new CUI.Modal
               placement: "c"
@@ -283,7 +299,7 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
                       text: $$("custom.data.type.dante.add_new.modal.introtext")
                       multiline: true
                   header_left: new CUI.Label( text: $$("custom.data.type.dante.add_new.modal.header_left"))
-                  header_right: new CUI.Label( text: $$("custom.data.type.dante.add_new.modal.header_right") + ': ' + that.getCustomSchemaSettings().insert_voc_notation.value)
+                  header_right: new CUI.Label( text: $$("custom.data.type.dante.add_new.modal.header_right") + ': ' + insertVocNotation)
                   footer_right: =>
                     [
                       new CUI.Button
