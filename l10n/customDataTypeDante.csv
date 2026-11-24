@@ -139,3 +139,7 @@ server.config.parameter.system.mapbox_dante.mapbox_access_token.label,Mapbox-Api
 server.config.parameter.system.update_dante.replace_dante_uri.label,Während des Updates DANTE-URIs ersetzen?,Replace DANTE-URIs in update?
 replacedanteuriform.data_table.from_dante_uri,Von DANTE-URI,From DANTE-URI
 replacedanteuriform.data_table.to_dante_uri,Zu DANTE-URI,To DANTE-URI
+custom.data.type.dante.config.parameter.mask.sort_suggest.value.label,Sortierung (Suggest),Sorting (Suggest)
+custom.data.type.dante.config.option.mask.sort_suggest.value.alphabet,Alphabetisch (Default),Alphabetical (default)
+custom.data.type.dante.config.option.mask.sort_suggest.value.score,Score,Score
+custom.data.type.dante.config.option.mask.sort_suggest.value.subset,Subset,Subset

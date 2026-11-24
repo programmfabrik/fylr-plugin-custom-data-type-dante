@@ -693,8 +693,13 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
         if opts?.callfrompoolmanager
           vocParameter = that.getVocabularyNameFromDatamodel(opts)
 
+        # sort-parameter?
+        sort = '&sort='
+        if that.getCustomMaskSettings()?.sort_suggest?.value
+            sort = '&sort=' + that.getCustomMaskSettings()?.sort_suggest?.value
+
         # start request
-        searchsuggest_xhr.xhr = new (CUI.XHR)(url: danteAPIPath + 'suggest?search=' + dante_searchstring + '&voc=' + vocParameter + '&language=' + that.getFrontendLanguage() + '&limit=' + dante_countSuggestions + cache + ancestors)
+        searchsuggest_xhr.xhr = new (CUI.XHR)(url: danteAPIPath + 'suggest?search=' + dante_searchstring + '&voc=' + vocParameter + '&language=' + that.getFrontendLanguage() + '&limit=' + dante_countSuggestions + cache + ancestors + sort)
         searchsuggest_xhr.xhr.start().done((data_1, status, statusText) ->
 
             extendedInfo_xhr = { "xhr" : undefined }
@@ -955,6 +960,10 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
                 if that.getCustomMaskSettings().ancestors?.value
                     ancestors = '&ancestors=' + that.getCustomMaskSettings().ancestors?.value
 
+                # sort-parameter?
+                sort = '&sort='
+                if that.getCustomMaskSettings()?.sort_suggest?.value
+                    sort = '&sort=' + that.getCustomMaskSettings()?.sort_suggest?.value
 
                 # if multible vocabularys are given, show only the first one in dropdown
                 vocTest = @getVocabularyNameFromDatamodel(opts)
@@ -965,7 +974,7 @@ class CustomDataTypeDANTE extends CustomDataTypeWithCommonsAsPlugin
                   voc = @getVocabularyNameFromDatamodel(opts)
 
                 # start new request
-                searchsuggest_xhr = new (CUI.XHR)(url: danteAPIPath + 'suggest?search=&voc=' + voc + '&language=' + @getFrontendLanguage() + '&limit=1000' + cache + ancestors)
+                searchsuggest_xhr = new (CUI.XHR)(url: danteAPIPath + 'suggest?search=&voc=' + voc + '&language=' + @getFrontendLanguage() + '&limit=1000' + cache + ancestors + sort)
                 searchsuggest_xhr.start().done((data, status, statusText) ->
                     # read options for select
                     select_items = []

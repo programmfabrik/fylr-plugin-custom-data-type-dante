@@ -110,6 +110,11 @@ custom_types:
           parameters:
             value:
               type: bool
+        - name: sort_suggest
+          parameters:
+            value:
+              type: select
+              options: ["alphabet", "score", "subset"]
         - name: allow_label_choice
           parameters:
             value:
